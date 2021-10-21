@@ -12,6 +12,9 @@ namespace TestingBackend {
     {
         private Dictionary<Guid, N> Nodes = new();
         private Dictionary<(Guid, Guid), E> Edges = new();
+
+        public IEnumerable<N> GetNodes => Nodes.Values;
+
         public Graph() {}
 
         public void AddNode(N node)
@@ -19,9 +22,21 @@ namespace TestingBackend {
             Nodes.Add(node.Id, node);
         }
 
+        public void RemoveNode(N node)
+        {
+            Nodes.Remove(node.Id);
+        }
+
         public void AddEdge(N a, N b, E weight)
         {
             Edges.Add((a.Id, b.Id), weight);
+        }
+
+        public void RemoveEdge(N a, N b)
+        {
+            // the order might be different than what was added
+            Edges.Remove((a.Id, b.Id));
+            Edges.Remove((b.Id, a.Id));
         }
 
         public IEnumerable<(N Node, E Weight)> GetNeighbours(N node)

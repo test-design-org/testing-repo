@@ -36,5 +36,3 @@ Assert.True(graph.GetNeighbours(_InfTo5C).Any(x => x.Node.Id == _1CTo3C.Id));
 Assert.True(graph.GetNeighbours(_5CToInf).First().Node.Id == _InfTo5C.Id);
 Assert.True(graph.GetNeighbours(_1CTo3C).First().Node.Id == _InfTo5C.Id);
 
-
-

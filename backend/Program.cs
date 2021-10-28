@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using backend;
+using backend.DTO;
 using NUnit.Framework;
 using TestingBackend;
 
@@ -29,6 +31,26 @@ foreach (var left in nodes)
         }
     }
 }
+
+var t = new List<IInput>()
+{
+    new IntervalDTO(Expressions.Lower, Interval.InfToNum(3,(true, true)), 1),
+    new IntervalDTO(Expressions.HigherAndEqual, Interval.NumToInf(1,(false, true)), 1),
+    new IntervalDTO(Expressions.Interval, Interval.NumToNum((-1, 5),(false, true)), 1),
+    new IntervalDTO(Expressions.Equal, Interval.NumToNum((6, 6),(false, false)), 1),
+    new IntervalDTO(Expressions.NotEqual, Interval.NumToNum((6, 6),(false, false)), 1)
+};
+
+var o = TestCaseGenerator.GenerateTestCases(t);
+
+foreach (var l in o)
+{
+    foreach (IntervalDTO m in l)
+    {
+        Console.Write($"{m.Interval.IntervalData.Low} {m.Interval.IntervalData.High}, ");
+    }
+}
+
 
 // If these assertions pass the code will continue, else it will fail
 Assert.True(graph.GetNeighbours(_InfTo5C).Any(x => x.Node.Id == _5CToInf.Id));

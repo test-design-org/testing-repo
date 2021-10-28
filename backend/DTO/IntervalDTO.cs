@@ -7,10 +7,13 @@ namespace backend.DTO
         public Expressions Expression { get; set; }
         public Interval? Interval {get; set;} = null;
 
-        public IntervalDTO(Expressions expression, Interval interval)
+        public float Precision {get; set;} = 0f;
+
+        public IntervalDTO(Expressions expression, Interval interval, float precision)
         {
             Expression = expression;
             Interval = interval;
+            Precision = precision;
         }
     }
 }

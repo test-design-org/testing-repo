@@ -45,11 +45,15 @@ var o = TestCaseGenerator.GenerateTestCases(t);
 
 foreach (var l in o)
 {
+    Console.Write("(");
     foreach (IntervalDTO m in l)
     {
         Console.Write($"{m.Interval.IntervalData.Low} {m.Interval.IntervalData.High}, ");
     }
+    Console.Write(")\n");
 }
+
+Console.WriteLine(o.Count);
 
 
 // If these assertions pass the code will continue, else it will fail

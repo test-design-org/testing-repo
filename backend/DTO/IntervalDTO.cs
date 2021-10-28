@@ -1,3 +1,4 @@
+using System;
 using TestingBackend;
 
 namespace backend.DTO
@@ -8,6 +9,8 @@ namespace backend.DTO
         public Interval? Interval {get; set;} = null;
 
         public float Precision {get; set;} = 0f;
+
+        public Guid Id {get;} = Guid.NewGuid();
 
         public IntervalDTO(Expressions expression, Interval interval, float precision)
         {

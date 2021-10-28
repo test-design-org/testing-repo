@@ -12,6 +12,7 @@ namespace backend
             var output = new HashSet<List<IInput>>();
 
             output.Add(CalculateInOnPatterns1(inputs));
+            output.Add(CalculateInOnPatterns2(inputs));
 
             return output;
         }
@@ -46,6 +47,48 @@ namespace backend
 
                     case Expressions.Interval:
                         output.Add(On(input, 3));
+                    break;
+                    
+                    default:
+                    break;
+                }
+            }
+
+            return output;
+        }
+
+        private static List<IInput> CalculateInOnPatterns2(List<IInput> inputs)
+        {
+            List<IInput> output = new();
+
+            foreach (var input in inputs)
+            {
+                switch (input.Expression)
+                {
+                    case Expressions.Lower:
+                        output.Add(On(input, 1));
+                    break;
+                    case Expressions.LowerAndEqual:
+                    case Expressions.HigherAndEqual:
+                    case Expressions.Equal:
+                        output.Add(On(input));
+                    break;
+
+                    case Expressions.Higher:
+                        output.Add(On(input, 2));
+                    break;
+
+                    case Expressions.NotEqual:
+                        output.Add(In(input, 1));
+                    break;
+
+                    case Expressions.BoolTrue:
+                    case Expressions.BoolFalse:
+                        output.Add(input);
+                    break;
+
+                    case Expressions.Interval:
+                        output.Add(On(input, 4));
                     break;
                     
                     default:

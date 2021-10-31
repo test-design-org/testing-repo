@@ -7,8 +7,8 @@ namespace backend
 {
     public class NTuple : IHasId<Guid>
     {
-        public Guid Id {get;} = Guid.NewGuid();
+        public Guid Id { get; } = Guid.NewGuid();
 
-        public List<IInput> List {get; set;}
+        public List<IInput> List { get; set; } = new ();
     }
 }

@@ -6,8 +6,6 @@ using backend.DTO;
 using NUnit.Framework;
 using TestingBackend;
 
-Console.WriteLine("Hello, World!");
-
 var _InfTo5C = Interval.InfToNum(5, (false, false));
 var _5CToInf = Interval.NumToInf(5, (false, false));
 var _1CTo3C = Interval.NumToNum((1,3), (false, false));

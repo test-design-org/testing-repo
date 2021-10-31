@@ -1,22 +1,31 @@
 using System;
-using TestingBackend;
+using NUnit.Framework.Constraints;
+using Interval = TestingBackend.Interval;
 
 namespace backend.DTO
 {
-    public class IntervalDTO : IInput
+    public record IntervalDTO(Expressions Expression, Interval Interval, float Precision) : IInput
     {
-        public Expressions Expression { get; set; }
-        public Interval? Interval {get; set;} = null;
-
-        public float Precision {get; set;} = 0f;
-
-        public Guid Id {get;} = Guid.NewGuid();
-
-        public IntervalDTO(Expressions expression, Interval interval, float precision)
+        public bool IntersectsWith(IInput other)
         {
-            Expression = expression;
-            Interval = interval;
-            Precision = precision;
+            if (other is IntervalDTO that)
+                return this.Interval.IntersectsWith(that.Interval);
+
+            return false;
+        }
+
+        public IInput Intersect(IInput other)
+        {
+            if (!this.IntersectsWith(other))
+                throw new ArgumentException("The two IntervalDTOs don't intersect with each other!");
+
+            IntervalDTO that = (other as IntervalDTO)!;
+            return new IntervalDTO(Expression, this.Interval.Intersect(that.Interval), Precision);
+        }
+
+        public override string ToString()
+        {
+            return $"{Interval}";
         }
     }
 }

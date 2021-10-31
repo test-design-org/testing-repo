@@ -4,9 +4,11 @@ using TestingBackend;
 namespace backend.DTO
 {
 
-    public interface IInput : IHasId<Guid>
+    public interface IInput
     {
-        Expressions Expression {get; set;}
+        Expressions Expression { get; }
+        bool IntersectsWith(IInput other);
+        IInput Intersect(IInput other);
     }   
 }
 

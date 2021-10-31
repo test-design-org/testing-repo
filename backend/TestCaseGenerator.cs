@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using backend.DTO;
 using TestingBackend;
 
@@ -7,144 +8,72 @@ namespace backend
 {
     public static class TestCaseGenerator
     {
-        public static HashSet<List<IInput>> GenerateTestCases(List<IInput> inputs)
-        {
-            var output = new HashSet<List<IInput>>();
-
-            output.Add(CalculateInOnPatterns1(inputs));
-            output.Add(CalculateInOnPatterns2(inputs));
-
-            var oof = OffOut(inputs);
-
-            foreach(var xd in oof)
-            {
-                output.Add(xd);
-            }
-
-            return output;
-        }
-
-        private static List<IInput> CalculateInOnPatterns1(List<IInput> inputs)
-        {
-            List<IInput> output = new();
-
-            foreach (var input in inputs)
-            {
-                switch (input.Expression)
+        public static HashSet<NTuple> GenerateTestCases(List<IInput> inputs) =>
+            new HashSet<List<IInput>> { 
+                    CalculateInOnPatterns1(inputs), 
+                    CalculateInOnPatterns2(inputs) }
+                .Union(OffOut(inputs))
+                .Select(x => new NTuple
                 {
-                    case Expressions.Lower:
-                    case Expressions.LowerAndEqual:
-                        output.Add(In(input, 1));
-                    break;
+                    List = x
+                })
+                .ToHashSet();
 
-                    case Expressions.Higher:
-                    case Expressions.HigherAndEqual:
-                    case Expressions.NotEqual:
-                        output.Add(In(input, 2));
-                    break;
+        private static List<IInput> CalculateInOnPatterns1(List<IInput> inputs) =>
 
-                    case Expressions.Equal:
-                        output.Add(On(input));
-                    break;
+            inputs.Select(input => input.Expression switch {
+                Expressions.Lower or
+                Expressions.LowerAndEqual => In(input, 1),
 
-                    case Expressions.BoolTrue:
-                    case Expressions.BoolFalse:
-                        output.Add(input);
-                    break;
+                Expressions.Higher or
+                Expressions.HigherAndEqual or
+                Expressions.NotEqual => In(input, 2),
 
-                    case Expressions.Interval:
-                        output.Add(On(input, 2));
-                    break;
-                    
-                    default:
-                    break;
-                }
-            }
+                Expressions.Equal => On(input),
 
-            return output;
-        }
+                Expressions.BoolTrue or
+                Expressions.BoolFalse => input,
 
-        private static List<IInput> CalculateInOnPatterns2(List<IInput> inputs)
-        {
-            List<IInput> output = new();
+                Expressions.Interval => On(input, 3),
+            })
+            .ToList();
 
-            foreach (var input in inputs)
-            {
-                switch (input.Expression)
-                {
-                    case Expressions.Lower:
-                    case Expressions.LowerAndEqual:
-                        output.Add(On(input, 1));
-                    break;
-                    case Expressions.Equal:
-                        output.Add(On(input));
-                    break;
+        private static List<IInput> CalculateInOnPatterns2(List<IInput> inputs) =>
+            inputs.Select(input => input.Expression switch {
+                Expressions.Lower or 
+                Expressions.LowerAndEqual => On(input, 1),
 
-                    case Expressions.Higher:
-                    case Expressions.HigherAndEqual:
-                        output.Add(On(input, 2));
-                    break;
+                Expressions.Equal => On(input),
 
-                    case Expressions.NotEqual:
-                        output.Add(In(input, 1));
-                    break;
+                Expressions.Higher or
+                Expressions.HigherAndEqual => On(input, 2),
 
-                    case Expressions.BoolTrue:
-                    case Expressions.BoolFalse:
-                        output.Add(input);
-                    break;
+                Expressions.NotEqual => In(input, 1),
 
-                    case Expressions.Interval:
-                        output.Add(On(input, 1));
-                    break;
-                    
-                    default:
-                    break;
-                }
-            }
+                Expressions.BoolTrue or
+                Expressions.BoolFalse => input,
 
-            return output;
-        }
+                Expressions.Interval => On(input, 1),
+            })
+            .ToList();
 
-        private static List<IInput> BaseLine(List<IInput> inputs)
-        {
-            List<IInput> output = new();
+        private static List<IInput> BaseLine(List<IInput> inputs) =>
+            inputs.Select(input => input.Expression switch {
+                Expressions.Lower or
+                Expressions.LowerAndEqual => In(input, 1),
 
-            foreach (var input in inputs)
-            {
-                switch (input.Expression)
-                {
-                    case Expressions.Lower:
-                    case Expressions.LowerAndEqual:
-                        output.Add(In(input, 1));
-                    break;
+                Expressions.Higher or
+                Expressions.HigherAndEqual or
+                Expressions.NotEqual => In(input, 2),
 
-                    case Expressions.Higher:
-                    case Expressions.HigherAndEqual:
-                    case Expressions.NotEqual:
-                        output.Add(In(input, 2));
-                    break;
+                Expressions.Equal => On(input),
 
-                    case Expressions.Equal:
-                        output.Add(On(input));
-                    break;
+                Expressions.BoolTrue or
+                Expressions.BoolFalse => input,
 
-                    case Expressions.BoolTrue:
-                    case Expressions.BoolFalse:
-                        output.Add(input);
-                    break;
-
-                    case Expressions.Interval:
-                        output.Add(In(input, 3));
-                    break;
-                    
-                    default:
-                    break;
-                }
-            }
-
-            return output;
-        }
+                Expressions.Interval => In(input, 3),
+            })
+            .ToList();
 
         private static HashSet<List<IInput>> OffOut(List<IInput> inputs)
         {
@@ -175,8 +104,8 @@ namespace backend
                     break;
 
                     case Expressions.Equal:
-                        based1[i] = Out(inputs[i], 1);
-                        based2[i] = Out(inputs[i], 2);
+                        based1[i] = Out(inputs[i], 3);
+                        based2[i] = Out(inputs[i], 4);
 
                         output.Add(based1);
                         output.Add(based2);
@@ -217,134 +146,163 @@ namespace backend
             return output;
         }
 
-        private static IInput On(IInput input, int version = 0)
-        {
-            var temp = input as IntervalDTO;
-            switch (version)
-            {
-                case 1 : // <, <=, Interval Right
-                    return new IntervalDTO(
-                        temp.Expression,
-                        Interval.NumToNum(
-                            (temp.Interval.IntervalData.High - (temp.Interval.IsOpen.High ? 1 : 0) * temp.Precision, 
-                            temp.Interval.IntervalData.High - (temp.Interval.IsOpen.High ? 1 : 0) * temp.Precision),
-                            (false, false)
-                            ),
-                            temp.Precision
-                        );
-                case 2 : // >, >=, Interval left
-                    return new IntervalDTO(
-                        temp.Expression,
-                        Interval.NumToNum(
-                            (temp.Interval.IntervalData.Low + (temp.Interval.IsOpen.Low ? 1 : 0) * temp.Precision,
-                            temp.Interval.IntervalData.Low + (temp.Interval.IsOpen.Low ? 1 : 0) * temp.Precision),
-                            (false, false)
-                            ),
-                            temp.Precision
-                        );
-                default : // ==
-                    return new IntervalDTO(input.Expression, temp.Interval, temp.Precision);
-            }
+        private static IInput On(IInput input, int version = 0) {
+            if(input is IntervalDTO interval)
+                return On(interval, version);
+
+            throw new ArgumentException("On's argument must be anm IntervalDTO");
         }
 
-        private static IInput? In(IInput input, int version = 0)
+        private static IntervalDTO On(IntervalDTO input, int version = 0) =>
+            version switch {
+                // <, <=, Interval Right
+                1 => new (
+                        input.Expression,
+                        Interval.NumToNum(
+                            (input.Interval.IntervalData.High - (input.Interval.IsOpen.High ? 1 : 0) * input.Precision, 
+                            input.Interval.IntervalData.High - (input.Interval.IsOpen.High ? 1 : 0) * input.Precision),
+                            (false, false)
+                            ),
+                            input.Precision
+                        ),
+                // >, >=, Interval left
+                2 => new (
+                        input.Expression,
+                        Interval.NumToNum(
+                            (input.Interval.IntervalData.Low + (input.Interval.IsOpen.Low ? 1 : 0) * input.Precision,
+                            input.Interval.IntervalData.Low + (input.Interval.IsOpen.Low ? 1 : 0) * input.Precision),
+                            (false, false)
+                            ),
+                            input.Precision
+                        ),
+                // ==
+                _ => new (input.Expression, input.Interval, input.Precision),
+            };
+
+        private static IInput In(IInput input, int version = 0)
         {
-            var temp = input as IntervalDTO;
-            switch (version)
-            {
-                case 1 : // <, <=
-                    return new IntervalDTO(
-                        temp.Expression,
+            if(input is IntervalDTO interval)
+                return In(interval, version);
+
+            throw new ArgumentException("In's argument must be anm IntervalDTO");
+        }
+
+        private static IntervalDTO In(IntervalDTO input, int version = 0) =>
+            version switch {
+                 // <, <=
+                1 => new (
+                        input.Expression,
                         Interval.InfToNum(
-                            temp.Interval.IntervalData.High - (temp.Interval.IsOpen.High ? 2 : 1) * temp.Precision,
-                            (true, false)
+                            input.Interval.IntervalData.High - (input.Interval.IsOpen.High ? 2 : 1) * input.Precision,
+                            false
                             ),
-                            temp.Precision
-                        );
-                case 2 : // >, =>
-                    return new IntervalDTO(
-                        temp.Expression,
+                            input.Precision
+                        ),
+                // >, =>
+                2 => new (
+                        input.Expression,
                         Interval.NumToInf(
-                            temp.Interval.IntervalData.Low + (temp.Interval.IsOpen.Low ? 2 : 1) * temp.Precision,
-                            (false, true)
+                            input.Interval.IntervalData.Low + (input.Interval.IsOpen.Low ? 2 : 1) * input.Precision,
+                            false
                             ),
-                            temp.Precision
-                        );
-                case 3 : // Interval
-                    return new IntervalDTO(
-                        temp.Expression,
+                            input.Precision
+                        ),
+                // Interval
+                3 => new (
+                        input.Expression,
                         Interval.NumToNum(
-                            (temp.Interval.IntervalData.Low + (temp.Interval.IsOpen.Low ? 2 : 1) * temp.Precision,
-                            temp.Interval.IntervalData.High - (temp.Interval.IsOpen.High ? 2 : 1) * temp.Precision),
+                            (input.Interval.IntervalData.Low + (input.Interval.IsOpen.Low ? 2 : 1) * input.Precision,
+                            input.Interval.IntervalData.High - (input.Interval.IsOpen.High ? 2 : 1) * input.Precision),
                             (false, false)
                             ),
-                            temp.Precision
-                        );
-                default :
-                    return null;
-            }
+                            input.Precision
+                        ),
+            };
+
+        private static IInput Off(IInput input, int version = 0)
+        {
+            if(input is IntervalDTO interval)
+                return Off(interval, version);
+
+            throw new ArgumentException("Off's argument must be anm IntervalDTO");
         }
 
-        private static IInput? Off(IInput input, int version = 0)
-        {
-            var temp = input as IntervalDTO;
-            switch (version)
+        private static IntervalDTO Off(IntervalDTO input, int version = 0) =>
+            version switch
             {
-                case 1 : // <, <=, Interval Right, == right
-                    return new IntervalDTO(
-                        temp.Expression,
+                // <, <=, Interval Right, == right
+                1 => new (
+                        input.Expression,
                         Interval.NumToNum(
-                            (temp.Interval.IntervalData.High + (temp.Interval.IsOpen.High ? 0 : 1) * temp.Precision, 
-                            temp.Interval.IntervalData.High + (temp.Interval.IsOpen.High ? 0 : 1) * temp.Precision),
+                            (input.Interval.IntervalData.High + (input.Interval.IsOpen.High ? 0 : 1) * input.Precision, 
+                             input.Interval.IntervalData.High + (input.Interval.IsOpen.High ? 0 : 1) * input.Precision),
                             (false, false)
                             ),
-                            temp.Precision
-                        );
-                case 2 : // >, >=, // Interval left, == left
-                    return new IntervalDTO(
-                        temp.Expression,
+                            input.Precision
+                        ),
+                // >, >=, // Interval left, == left
+                2 => new IntervalDTO(
+                        input.Expression,
                         Interval.NumToNum(
-                            (temp.Interval.IntervalData.Low - (temp.Interval.IsOpen.Low ? 0 : 1) * temp.Precision,
-                            temp.Interval.IntervalData.Low - (temp.Interval.IsOpen.Low ? 0 : 1) * temp.Precision),
+                            (input.Interval.IntervalData.Low - (input.Interval.IsOpen.Low ? 0 : 1) * input.Precision,
+                             input.Interval.IntervalData.Low - (input.Interval.IsOpen.Low ? 0 : 1) * input.Precision),
                             (false, false)
                             ),
-                            temp.Precision
-                        );
-                default :
-                    return new IntervalDTO(
-                        temp.Expression,
-                        temp.Interval,
-                        temp.Precision
-                    );
-            }
+                            input.Precision
+                        ),
+                _ => new (
+                        input.Expression,
+                        input.Interval,
+                        input.Precision
+                    ),
+            };
+
+        private static IInput Out(IInput input, int version = 0)
+        {
+            if(input is IntervalDTO interval)
+                return Out(interval, version);
+
+            throw new ArgumentException("Out's argument must be anm IntervalDTO");
         }
 
-        private static IInput? Out(IInput input, int version = 0)
-        {
-            var temp = input as IntervalDTO;
-            switch (version)
-            {
-                case 1 : // <, <=, Interval Right
-                    return new IntervalDTO(
-                        temp.Expression,
+        private static IntervalDTO Out(IntervalDTO input, int version = 0) =>
+            version switch {
+                // <, <=, Interval Right
+                1 => new (
+                        input.Expression,
                         Interval.NumToInf(
-                            temp.Interval.IntervalData.High + (temp.Interval.IsOpen.High ? 1 : 2) * temp.Precision,
-                            (false, true)
+                            input.Interval.IntervalData.High + (input.Interval.IsOpen.High ? 1 : 2) * input.Precision,
+                            false
                             ),
-                            temp.Precision
-                        );
-                case 2 : // >, =>, Interval Left
-                    return new IntervalDTO(
-                        temp.Expression,
+                            input.Precision
+                        ),
+                // >, =>, Interval Left
+                2 => new (
+                        input.Expression,
                         Interval.InfToNum(
-                            temp.Interval.IntervalData.Low - (temp.Interval.IsOpen.Low ? 1 : 2) * temp.Precision,
-                            (true, false)
+                            input.Interval.IntervalData.Low - (input.Interval.IsOpen.Low ? 1 : 2) * input.Precision,
+                            false
                             ),
-                            temp.Precision
-                        );
-                default :
-                    return null;
-            }
-        }
+                            input.Precision
+                        ),
+                // =, Right
+                3 => new (
+                    input.Expression,
+                    Interval.NumToInf(
+                        input.Interval.IntervalData.High + input.Precision,
+                        false
+                    ),
+                    input.Precision
+                ),
+                // =, Left
+                4 => new (
+                    input.Expression,
+                    Interval.InfToNum(
+                        input.Interval.IntervalData.Low - input.Precision,
+                        false
+                    ),
+                    input.Precision
+                ),
+            };
     }
 }

@@ -3,7 +3,7 @@ using System.Xml.Xsl;
 
 namespace TestingBackend
 {
-    public class Interval : IHasId<Guid>
+    public record Interval
     {
         private bool _negInf = false;
         private bool _posInf = false;

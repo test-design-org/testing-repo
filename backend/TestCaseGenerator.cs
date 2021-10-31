@@ -8,11 +8,15 @@ namespace backend
 {
     public static class TestCaseGenerator
     {
-        public static HashSet<List<IInput>> GenerateTestCases(List<IInput> inputs) =>
+        public static HashSet<NTuple> GenerateTestCases(List<IInput> inputs) =>
             new HashSet<List<IInput>> { 
                     CalculateInOnPatterns1(inputs), 
                     CalculateInOnPatterns2(inputs) }
                 .Union(OffOut(inputs))
+                .Select(x => new NTuple
+                {
+                    List = x
+                })
                 .ToHashSet();
 
         private static List<IInput> CalculateInOnPatterns1(List<IInput> inputs) =>
@@ -100,8 +104,8 @@ namespace backend
                     break;
 
                     case Expressions.Equal:
-                        based1[i] = Out(inputs[i], 1);
-                        based2[i] = Out(inputs[i], 2);
+                        based1[i] = Out(inputs[i], 3);
+                        based2[i] = Out(inputs[i], 4);
 
                         output.Add(based1);
                         output.Add(based2);
@@ -231,7 +235,7 @@ namespace backend
                         input.Expression,
                         Interval.NumToNum(
                             (input.Interval.IntervalData.High + (input.Interval.IsOpen.High ? 0 : 1) * input.Precision, 
-                            input.Interval.IntervalData.High + (input.Interval.IsOpen.High ? 0 : 1) * input.Precision),
+                             input.Interval.IntervalData.High + (input.Interval.IsOpen.High ? 0 : 1) * input.Precision),
                             (false, false)
                             ),
                             input.Precision
@@ -241,7 +245,7 @@ namespace backend
                         input.Expression,
                         Interval.NumToNum(
                             (input.Interval.IntervalData.Low - (input.Interval.IsOpen.Low ? 0 : 1) * input.Precision,
-                            input.Interval.IntervalData.Low - (input.Interval.IsOpen.Low ? 0 : 1) * input.Precision),
+                             input.Interval.IntervalData.Low - (input.Interval.IsOpen.Low ? 0 : 1) * input.Precision),
                             (false, false)
                             ),
                             input.Precision
@@ -281,6 +285,24 @@ namespace backend
                             ),
                             input.Precision
                         ),
+                // =, Right
+                3 => new (
+                    input.Expression,
+                    Interval.NumToInf(
+                        input.Interval.IntervalData.High + input.Precision,
+                        (false, true)
+                    ),
+                    input.Precision
+                ),
+                // =, Left
+                4 => new (
+                    input.Expression,
+                    Interval.InfToNum(
+                        input.Interval.IntervalData.Low - input.Precision,
+                        (true, false)
+                    ),
+                    input.Precision
+                ),
             };
     }
 }

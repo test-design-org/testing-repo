@@ -10,6 +10,15 @@ namespace backend
     {
         public List<IInput> List { get; set; } = new ();
 
+        public bool IntersectsWith(NTuple other)
+        {
+            if (List.Count != other.List.Count)
+                return false;
+
+            return List.Zip(other.List)
+                       .All(x => x.First.IntersectsWith(x.Second));
+        }
+
         public override bool Equals(object? obj) => Equals(obj as NTuple);
 
         private bool Equals(NTuple? that)
@@ -25,5 +34,11 @@ namespace backend
 
         public override int GetHashCode() =>
             List.Aggregate(0, (item, hashCode) => HashCode.Combine(item.GetHashCode(), hashCode));
+
+        public override string ToString()
+        {
+            var elements = String.Join(",", List);
+            return $"({elements})";
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml.Xsl;
+﻿using backend;
 
 namespace TestingBackend
 {
@@ -9,7 +8,6 @@ namespace TestingBackend
         private bool _posInf = false;
         private (double Low, double High) _interval = (0, 0);
         private (bool Low, bool High) _isOpen = (false, false);
-        public Guid Id { get; } = Guid.NewGuid();
         public (double Low, double High) IntervalData => _interval;
         public (bool Low, bool High) IsOpen => _isOpen;
         public bool NegInf => _negInf;
@@ -60,6 +58,17 @@ namespace TestingBackend
                 return false;
 
             return true;
+        }
+
+        public override string ToString()
+        {
+            string left = _negInf ? "-∞" : _interval.Low.ToString();
+            string right = _posInf ? "∞" : _interval.High.ToString();
+
+            string leftBrace = _isOpen.Low ? "(" : "[";
+            string rightBrace = _isOpen.High ? ")" : "]";
+
+            return $"{leftBrace}{left},{right}{rightBrace}";
         }
     }
 }

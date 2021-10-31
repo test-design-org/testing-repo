@@ -10,6 +10,10 @@ namespace TestingBackend
         private (double Low, double High) _interval = (0, 0);
         private (bool Low, bool High) _isOpen = (false, false);
         public Guid Id { get; } = Guid.NewGuid();
+        public (double Low, double High) IntervalData => _interval;
+        public (bool Low, bool High) IsOpen => _isOpen;
+        public bool NegInf => _negInf;
+        public bool PosInf => _posInf;
 
         private Interval()
         {

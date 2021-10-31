@@ -194,7 +194,7 @@ namespace backend
                         input.Expression,
                         Interval.InfToNum(
                             input.Interval.IntervalData.High - (input.Interval.IsOpen.High ? 2 : 1) * input.Precision,
-                            (true, false)
+                            false
                             ),
                             input.Precision
                         ),
@@ -203,7 +203,7 @@ namespace backend
                         input.Expression,
                         Interval.NumToInf(
                             input.Interval.IntervalData.Low + (input.Interval.IsOpen.Low ? 2 : 1) * input.Precision,
-                            (false, true)
+                            false
                             ),
                             input.Precision
                         ),
@@ -272,7 +272,7 @@ namespace backend
                         input.Expression,
                         Interval.NumToInf(
                             input.Interval.IntervalData.High + (input.Interval.IsOpen.High ? 1 : 2) * input.Precision,
-                            (false, true)
+                            false
                             ),
                             input.Precision
                         ),
@@ -281,7 +281,7 @@ namespace backend
                         input.Expression,
                         Interval.InfToNum(
                             input.Interval.IntervalData.Low - (input.Interval.IsOpen.Low ? 1 : 2) * input.Precision,
-                            (true, false)
+                            false
                             ),
                             input.Precision
                         ),
@@ -290,7 +290,7 @@ namespace backend
                     input.Expression,
                     Interval.NumToInf(
                         input.Interval.IntervalData.High + input.Precision,
-                        (false, true)
+                        false
                     ),
                     input.Precision
                 ),
@@ -299,7 +299,7 @@ namespace backend
                     input.Expression,
                     Interval.InfToNum(
                         input.Interval.IntervalData.Low - input.Precision,
-                        (true, false)
+                        false
                     ),
                     input.Precision
                 ),

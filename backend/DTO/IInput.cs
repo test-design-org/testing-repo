@@ -8,6 +8,7 @@ namespace backend.DTO
     {
         Expressions Expression { get; }
         bool IntersectsWith(IInput other);
+        IInput Intersect(IInput other);
     }   
 }
 

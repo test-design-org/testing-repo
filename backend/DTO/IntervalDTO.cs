@@ -14,6 +14,15 @@ namespace backend.DTO
             return false;
         }
 
+        public IInput Intersect(IInput other)
+        {
+            if (!this.IntersectsWith(other))
+                throw new ArgumentException("The two IntervalDTOs don't intersect with each other!");
+
+            IntervalDTO that = (other as IntervalDTO)!;
+            return new IntervalDTO(Expression, this.Interval.Intersect(that.Interval), Precision);
+        }
+
         public override string ToString()
         {
             return $"{Interval}";

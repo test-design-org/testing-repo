@@ -7,10 +7,17 @@ namespace backend.DTO
         public bool IntersectsWith(IInput other)
         {
             if (other is BoolDTO that)
-                return this.Expression == that.Expression &&
-                       this.BoolVal == that.BoolVal;
+                return this.BoolVal == that.BoolVal;
 
             return false;
+        }
+
+        public IInput Intersect(IInput other)
+        {
+            if (!this.IntersectsWith(other))
+                throw new ArgumentException("The two BoolDTOs doesn't intersect with each other!");
+
+            return new BoolDTO(Expression, BoolVal);
         }
     }
 }

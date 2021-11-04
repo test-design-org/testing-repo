@@ -2,9 +2,8 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using backend.DTO;
-using TestingBackend;
 
-namespace backend
+namespace backend.Models
 {
     public class NTuple
     {

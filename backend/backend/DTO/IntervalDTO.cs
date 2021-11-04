@@ -1,6 +1,6 @@
 using System;
-using NUnit.Framework.Constraints;
-using Interval = TestingBackend.Interval;
+using backend.Models;
+using Interval = backend.Models.Interval;
 
 namespace backend.DTO
 {

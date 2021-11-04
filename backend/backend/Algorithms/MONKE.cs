@@ -1,7 +1,8 @@
 using System.Linq;
+using backend.Models;
 using QuikGraph;
 
-namespace backend
+namespace backend.Algorithms
 {
     public class MONKE
     {

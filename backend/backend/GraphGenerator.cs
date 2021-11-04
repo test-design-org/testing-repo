@@ -54,6 +54,13 @@ namespace backend
                 {
                     args.VertexFormat.Label = args.Vertex.ToString();
                 };
+                algorithm.FormatEdge += (sender, args) =>
+                {
+                    args.EdgeFormat.Label = new()
+                    {
+                        Value = args.Edge.Tag.ToString(),
+                    };
+                };
             });
             var url = $"https://dreampuf.github.io/GraphvizOnline/#{Uri.EscapeDataString(dotGraph)}";
             Console.WriteLine(url);

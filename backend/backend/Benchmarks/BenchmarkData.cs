@@ -27,16 +27,25 @@ namespace backend.Benchmarks
             new IntervalDTO(Expressions.LowerAndEqual, Interval.InfToNum(10,false), 1),
             // new IntervalDTO(Expressions.Interval, Interval.NumToNum((-10, 50),(false, true)), 1),
         };
+        
+        public static List<IInput> T4 => new()
+        {
+            new IntervalDTO(Expressions.Interval, Interval.NumToNum((4,16),(true, true)), 1),
+            new IntervalDTO(Expressions.LowerAndEqual, Interval.InfToNum(1,false), 1),
+            // new IntervalDTO(Expressions.Interval, Interval.NumToNum((-10, 50),(false, true)), 1),
+        };
 
         public static List<List<IInput>> TestInput1 => new() { T1, T2 };
         public static List<List<IInput>> TestInput2 => new() { T1, T3 };
         public static List<List<IInput>> TestInput3 => new() { T1, T2, T3 };
+        public static List<List<IInput>> TestInput4 => new() { T1, T2, T3, T4 };
 
         public static IEnumerable<List<List<IInput>>> GetBenchmarkSets => new[]
         {
             TestInput1,
             TestInput2,
             TestInput3,
+            TestInput4,
         };
     }
 }

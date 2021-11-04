@@ -23,10 +23,11 @@ namespace backend
 
             inputs.Select(input => input.Expression switch {
                 Expressions.Lower or
-                Expressions.LowerAndEqual => In(input, 1),
+                Expressions.LowerAndEqual => InIn(input, 1),
 
                 Expressions.Higher or
-                Expressions.HigherAndEqual or
+                Expressions.HigherAndEqual => InIn(input, 2),
+
                 Expressions.NotEqual => In(input, 2),
 
                 Expressions.Equal => On(input),
@@ -34,7 +35,7 @@ namespace backend
                 Expressions.BoolTrue or
                 Expressions.BoolFalse => input,
 
-                Expressions.Interval => On(input, 3),
+                Expressions.Interval => On(input, 2),
             })
             .ToList();
 
@@ -184,7 +185,7 @@ namespace backend
             if(input is IntervalDTO interval)
                 return In(interval, version);
 
-            throw new ArgumentException("In's argument must be anm IntervalDTO");
+            throw new ArgumentException("In's argument must be an IntervalDTO");
         }
 
         private static IntervalDTO In(IntervalDTO input, int version = 0) =>
@@ -217,6 +218,36 @@ namespace backend
                             ),
                             input.Precision
                         ),
+            };
+
+        private static IInput InIn(IInput input, int version = 0)
+        {
+            if(input is IntervalDTO interval)
+                return InIn(interval, version);
+
+            throw new ArgumentException("In's argument must be an IntervalDTO");
+        }
+
+        private static IntervalDTO InIn(IntervalDTO input, int version = 0) =>
+            version switch {
+                 // <, <=
+                1 => new (
+                        input.Expression,
+                        Interval.InfToNum(
+                            input.Interval.IntervalData.High - (input.Interval.IsOpen.High ? 3 : 2) * input.Precision,
+                            false
+                            ),
+                            input.Precision
+                        ),
+                // >, =>
+                2 => new (
+                        input.Expression,
+                        Interval.NumToInf(
+                            input.Interval.IntervalData.Low + (input.Interval.IsOpen.Low ? 2 : 3) * input.Precision,
+                            false
+                            ),
+                            input.Precision
+                        )
             };
 
         private static IInput Off(IInput input, int version = 0)

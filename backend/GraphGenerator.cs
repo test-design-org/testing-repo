@@ -12,21 +12,22 @@ namespace backend
     {
         public static UndirectedGraph<NTuple, TaggedEdge<NTuple,int>> GenerateGraph(List<List<IInput>> inputs)
         {
-            var nTuples = inputs.SelectMany(TestCaseGenerator.GenerateTestCases);
+            var nTuples = inputs.SelectMany(TestCaseGenerator.GenerateTestCases).ToList();
 
-            var graph = GenerateEdges(nTuples)
-                .ToUndirectedGraph<NTuple, TaggedEdge<NTuple,int>>(allowParallelEdges: false);
+            var graph = new UndirectedGraph<NTuple, TaggedEdge<NTuple, int>>(allowParallelEdges: false);
+            var edges = GenerateEdges(nTuples);
+            
+            graph.AddVertexRange(nTuples);
+            graph.AddEdgeRange(edges);
             
             return graph;
         }
 
-        private static IEnumerable<TaggedEdge<NTuple,int>> GenerateEdges(IEnumerable<NTuple> nTuples)
+        private static IEnumerable<TaggedEdge<NTuple,int>> GenerateEdges(List<NTuple> nTuples)
         {
-            // Convert to list to prevent double-enumeration
-            var enumerable = nTuples.ToArray();
-            foreach (var item in enumerable)
+            foreach (var item in nTuples)
             {
-                foreach (var item2 in enumerable)
+                foreach (var item2 in nTuples)
                 {
                     if (ReferenceEquals(item, item2))
                         continue;

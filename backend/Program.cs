@@ -84,14 +84,13 @@ var t2 = new List<IInput>
 
 var t3 = new List<IInput>
 {
-    new IntervalDTO(Expressions.Interval, Interval.NumToNum((-1,1),(true, true)), 1),
+    new IntervalDTO(Expressions.Interval, Interval.NumToNum((1,5),(true, true)), 1),
     new IntervalDTO(Expressions.LowerAndEqual, Interval.InfToNum(10,false), 1),
     // new IntervalDTO(Expressions.Interval, Interval.NumToNum((-10, 50),(false, true)), 1),
 };
 
 var graph = GraphGenerator.GenerateGraph(new List<List<IInput>> { t1, t3 });
 GraphGenerator.PrintGraphUrl(graph);
-
 
 var MONKEgraph = MONKE.RunMONKE(graph);
 GraphGenerator.PrintGraphUrl(MONKEgraph);

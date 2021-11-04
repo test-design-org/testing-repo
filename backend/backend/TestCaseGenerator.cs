@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using backend.DTO;
-using TestingBackend;
+using backend.Models;
 
 namespace backend
 {

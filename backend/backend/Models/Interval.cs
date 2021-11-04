@@ -1,7 +1,7 @@
 ﻿using System;
 using backend;
 
-namespace TestingBackend
+namespace backend.Models
 {
     public record Interval
     {

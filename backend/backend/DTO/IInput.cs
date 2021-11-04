@@ -1,5 +1,5 @@
 using System;
-using TestingBackend;
+using backend.Models;
 
 namespace backend.DTO
 {

@@ -1,2 +1,4 @@
 # Editor config files
 /.vscode/
+backend/obj/
+backend/bin/

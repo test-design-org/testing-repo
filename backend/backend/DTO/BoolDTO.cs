@@ -20,5 +20,10 @@ namespace backend.DTO
 
             return new BoolDTO(Expression, BoolVal);
         }
+        
+        public override string ToString()
+        {
+            return $"{BoolVal}";
+        }
     }
 }

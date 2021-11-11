@@ -14,7 +14,7 @@ namespace backend.Benchmarks
 
 
 
-        public static IEnumerable<List<List<IInput>>> BenchmarkSets => BenchmarkData.GetBenchmarkSets;
+        public static IEnumerable<List<List<IInput>>> BenchmarkSets => BenchmarkData2.GetBenchmarkSets;
 
         [ParamsSource(nameof(BenchmarkSets))]
         public List<List<IInput>> input;
@@ -27,5 +27,8 @@ namespace backend.Benchmarks
 
         [Benchmark]
         public UndirectedGraph<NTuple,TaggedEdge<NTuple,int>> Monke() => MONKE.RunMONKE(data);
+        
+        [Benchmark]
+        public UndirectedGraph<NTuple,TaggedEdge<NTuple,int>> LeastLosing() => Algorithms.LeastLosing.RunLeastLosing(data);
     }
 }

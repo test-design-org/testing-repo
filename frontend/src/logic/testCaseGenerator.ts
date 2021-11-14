@@ -1,9 +1,18 @@
-import IOps, { Interval } from 'interval-arithmetic';
-import { BoolDTO, Expression, IInput, IntervalDTO } from './models/dtos';
-import type { NTuple } from './models/ntuple';
+import { array, set } from "fp-ts";
+import { union } from "fp-ts/lib/Array";
+import IOps, { Interval } from "interval-arithmetic";
+import { BoolDTO, Expression, IInput, IntervalDTO } from "./models/dtos";
+import { NTuple } from "./models/ntuple";
 
 export function generateTestCases(inputs: IInput[]): NTuple[] {
-    return [];
+  const nTuples = [
+    calculateInOnPatterns1(inputs),
+    calculateInOnPatterns2(inputs),
+    ...OffOut(inputs)
+  ]
+  .map(x => new NTuple(x));
+
+  return array.uniq(NTuple.Eq)(nTuples);
 }
 
 const calculateInOnPatterns1 = (inputs: IInput[]): IInput[] =>
@@ -152,38 +161,179 @@ function OffOut(inputs: IInput[]): IInput[][] {
   return output;
 }
 
-function On(input: IInput, version: number = 0): IInput {
-    if(!(input instanceof IntervalDTO))
-        throw new Error("On's argument must be an IntervalDTO");
+function On(input: IInput, version: 0 | 1 | 2 = 0): IInput {
+  if (!(input instanceof IntervalDTO))
+    throw new Error("On's argument must be an IntervalDTO");
 
-    // switch(version) {
-    //     case 1:
-    //         return new IntervalDTO(
-    //             input.expression,
-    //             new Interval(
-    //                 (input.interval.hi - (input.interval. ? 1 : 0) * input.Precision
-    //                 input.Interval.IntervalData.High - (input.Interval.IsOpen.High ? 1 : 0) * input.Precision)
-    //             )
-    //         )
-    // }
-    return new BoolDTO(Expression.BoolFalse, true);
+  switch (version) {
+    // <, <=, Interval Right
+    case 1:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          input.interval.hi - (input.isOpen.hi ? 1 : 0) * input.precision,
+          input.interval.hi - (input.isOpen.hi ? 1 : 0) * input.precision
+        ),
+        input.precision
+      );
+    // >, >=, Interval left
+    case 2:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          input.interval.lo - (input.isOpen.lo ? 1 : 0) * input.precision,
+          input.interval.lo - (input.isOpen.lo ? 1 : 0) * input.precision
+        ),
+        input.precision
+      );
+    // ==
+    case 0:
+      return new IntervalDTO(
+        input.expression,
+        input.interval,
+        input.precision
+      );
+  }
 }
 
+function In(input: IInput, version: 1 | 2 | 3): IInput {
+  if (!(input instanceof IntervalDTO))
+    throw new Error("In's argument must be an IntervalDTO");
 
-function InIn(input: IInput, version: number = 0): IInput {
-    return new BoolDTO(Expression.BoolFalse, true);
+  switch (version) {
+    // <, <=
+    case 1:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          -Infinity,
+          input.interval.hi - (input.isOpen.hi ? 2 : 1) * input.precision
+        ),
+        input.precision
+      );
+    // >, =>
+    case 2:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          input.interval.lo + (input.isOpen.lo ? 2 : 1) * input.precision,
+          Infinity
+        ),
+        input.precision
+      );
+    // Interval
+    case 3:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          input.interval.lo + (input.isOpen.lo ? 2 : 1) * input.precision,
+          input.interval.hi - (input.isOpen.hi ? 2 : 1) * input.precision
+        ),
+        input.precision
+      );
+  }
 }
 
-function In(input: IInput, version: number = 0): IInput {
-    return new BoolDTO(Expression.BoolFalse, true);
+function InIn(input: IInput, version: 1 | 2): IInput {
+  if (!(input instanceof IntervalDTO))
+    throw new Error("InIn's argument must be an IntervalDTO");
 
+  switch (version) {
+    // <, <=
+    case 1:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          -Infinity,
+          input.interval.hi - (input.isOpen.hi ? 3 : 2) * input.precision
+        ),
+        input.precision
+      );
+    // >, =>
+    case 2:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          input.interval.lo + (input.isOpen.lo ? 2 : 3) * input.precision,
+          Infinity
+        ),
+        input.precision
+      );
+  }
 }
 
-function Out(input: IInput, version: number = 0): IInput {
-    return new BoolDTO(Expression.BoolFalse, true);
-
-}
 function Off(input: IInput, version: number = 0): IInput {
-    return new BoolDTO(Expression.BoolFalse, true);
+  if (!(input instanceof IntervalDTO))
+    throw new Error("Off's argument must be an IntervalDTO");
 
+  switch (version) {
+    // <, <=, Interval Right, == right
+    case 1:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          input.interval.hi + (input.isOpen.hi ? 0 : 1) * input.precision
+        ),
+        input.precision
+      );
+    // >, >=, // Interval left, == left
+    case 2:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          input.interval.lo - (input.isOpen.lo ? 0 : 1) * input.precision
+        ),
+        input.precision
+      );
+
+    default:
+      return new IntervalDTO(
+        input.expression,
+        input.interval,
+        input.precision
+      );
+  }
+}
+
+function Out(input: IInput, version: 1 | 2 | 3 | 4): IInput {
+  if (!(input instanceof IntervalDTO))
+    throw new Error("Off's argument must be an IntervalDTO");
+
+  switch (version) {
+    // <, <=, Interval Right
+    case 1:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          input.interval.hi + (input.isOpen.hi ? 1 : 2) * input.precision,
+          Infinity
+        ),
+        input.precision
+      );
+
+    // >, =>, Interval Left
+    case 2:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(
+          -Infinity,
+          input.interval.lo - (input.isOpen.lo ? 1 : 2) * input.precision
+        ),
+        input.precision
+      );
+    // =, Right
+    case 3:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(input.interval.hi + input.precision, Infinity),
+        input.precision
+      );
+    // =, Left
+    case 4:
+      return new IntervalDTO(
+        input.expression,
+        new Interval(-Infinity, input.interval.lo - input.precision),
+        input.precision
+      );
+  }
 }

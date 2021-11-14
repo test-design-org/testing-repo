@@ -1,76 +1,135 @@
-import IOps, { Interval } from 'interval-arithmetic';
+import { boolean } from "fp-ts";
+import { Eq } from "fp-ts/lib/Eq";
+import IOps, { Interval } from "interval-arithmetic";
 
 export enum Expression {
-    LessThan,
-    LessThanOrEqualTo,
-    GreaterThan,
-    GreaterThanOrEqualTo,
-    EqualTo,
-    NotEqualTo,
-    BoolTrue,
-    BoolFalse,
-    Interval,
+  LessThan,
+  LessThanOrEqualTo,
+  GreaterThan,
+  GreaterThanOrEqualTo,
+  EqualTo,
+  NotEqualTo,
+  BoolTrue,
+  BoolFalse,
+  Interval,
 }
 
 export interface IInput {
-    expression: Expression;
-    intersectsWith(other: IInput): boolean;
-    intersect(other: IInput): IInput;
+  expression: Expression;
+  intersectsWith(other: IInput): boolean;
+  intersect(other: IInput): IInput;
+  toString(): string;
 }
 
 export class BoolDTO implements IInput {
-    expression: Expression;
-    boolVal: boolean;
+  expression: Expression;
+  boolVal: boolean;
 
-    constructor(expression: Expression, boolVal: boolean) {
-        this.expression = expression;
-        this.boolVal = boolVal;
-    }
+  constructor(expression: Expression, boolVal: boolean) {
+    this.expression = expression;
+    this.boolVal = boolVal;
+  }
 
-    intersectsWith(other: IInput): boolean {
-        if(other instanceof BoolDTO)
-            return other.boolVal === this.boolVal;
+  intersectsWith(other: IInput): boolean {
+    if (other instanceof BoolDTO) return other.boolVal === this.boolVal;
 
-        return false;
-    }
+    return false;
+  }
 
-    intersect(other: IInput): IInput {
-        if(!this.intersectsWith(other))
-            throw new Error(`Cannot intersect types ${this} ${other}`);
+  intersect(other: IInput): IInput {
+    if (!this.intersectsWith(other))
+      throw new Error(`Cannot intersect types ${this} ${other}`);
 
-        return new BoolDTO(this.expression, this.boolVal);
-    }
+    return new BoolDTO(this.expression, this.boolVal);
+  }
 
-    toString(): string {
-        return `${this.boolVal}`;
-    }
+  toString(): string {
+    return `${this.boolVal}`;
+  }
+
+  equals(other: BoolDTO): boolean {
+    if (this === other) return true;
+
+    return (
+      this.expression === other.expression && this.boolVal === other.boolVal
+    );
+  }
+}
+
+export interface IsOpen {
+  hi: boolean;
+  lo: boolean;
 }
 
 export class IntervalDTO implements IInput {
-    expression: Expression;
-    interval: Interval;
+  expression: Expression;
+  interval: Interval;
+  isOpen: IsOpen;
+  precision: number;
 
-    constructor(expression: Expression, interval: Interval) {
-        this.expression = expression;
-        this.interval = interval;
-    }
+  constructor(
+    expression: Expression,
+    interval: Interval,
+    precision: number,
+    isOpen: IsOpen = { hi: false, lo: false }
+  ) {
+    this.expression = expression;
+    this.interval = interval;
+    this.precision = precision;
+    this.isOpen = isOpen;
+  }
 
-    intersectsWith(other: IInput): boolean {
-        if(other instanceof IntervalDTO)
-            return IOps.intervalsOverlap(this.interval, other.interval);
+  intersectsWith(other: IInput): boolean {
+    if (other instanceof IntervalDTO)
+      return IOps.intervalsOverlap(this.interval, other.interval);
 
-        return false;
-    }
+    return false;
+  }
 
-    intersect(other: IInput): IInput {
-        if(!this.intersectsWith(other))
-            throw new Error(`Cannot intersect types ${this} ${other}`);
+  intersect(other: IInput): IInput {
+    if (!this.intersectsWith(other))
+      throw new Error(`Cannot intersect types ${this} ${other}`);
 
-        const that = other as IntervalDTO;
-        return new IntervalDTO(this.expression, IOps.intersection(this.interval, that.interval));
-    }
+    const that = other as IntervalDTO;
+    return new IntervalDTO(
+      this.expression,
+      IOps.intersection(this.interval, that.interval),
+      this.precision
+    );
+  }
 
-    toString(): string {
-        return `${this.interval}`;
-    }
+  toString(): string {
+    const left = this.interval.lo === -Infinity ? "-∞" : this.interval.lo.toString();
+    const right = this.interval.hi === Infinity ? "∞" : this.interval.hi.toString();
+
+    const leftBrace = this.isOpen.lo ? "(" : "[";
+    const rightBrace = this.isOpen.hi ? ")" : "]";
+
+    return `${leftBrace}${left},${right}${rightBrace}`;
+  }
+
+  equals(other: IntervalDTO): boolean {
+    if (this === other) return true;
+
+    return (
+      this.expression === other.expression &&
+      IOps.equal(this.interval, other.interval) &&
+      this.precision === other.precision &&
+      this.isOpen.hi === this.isOpen.hi &&
+      this.isOpen.lo === this.isOpen.lo
+    );
+  }
+}
+
+export namespace IInput {
+  export const Eq: Eq<IInput> = {
+    equals(x: IInput, y: IInput) {
+      if (x instanceof BoolDTO && y instanceof BoolDTO) return x.equals(y);
+
+      if (x instanceof IntervalDTO && y instanceof IntervalDTO)
+        return x.equals(y);
+
+      return false;
+    },
+  };
 }

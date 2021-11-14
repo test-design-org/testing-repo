@@ -1,5 +1,5 @@
 import { Graph } from '../graph';
-import { joinNodesOnEdge, replaceNodes } from './common';
+import { joinNodesOnEdge } from './common';
 
 export function runMONKE(_graph: Graph): Graph {
   const graph = _graph.shallowClone();

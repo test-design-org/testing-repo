@@ -1,6 +1,5 @@
-import { boolean } from "fp-ts";
-import { Eq } from "fp-ts/lib/Eq";
-import IOps, { Interval } from "interval-arithmetic";
+import { Eq } from 'fp-ts/lib/Eq';
+import IOps, { Interval } from 'interval-arithmetic';
 
 export enum Expression {
   LessThan,
@@ -12,6 +11,7 @@ export enum Expression {
   BoolTrue,
   BoolFalse,
   Interval,
+  MissingVariable,
 }
 
 export interface IInput {
@@ -31,6 +31,7 @@ export class BoolDTO implements IInput {
   }
 
   intersectsWith(other: IInput): boolean {
+    if (other instanceof MissingVariableDTO) return true;
     if (other instanceof BoolDTO) return other.boolVal === this.boolVal;
 
     return false;
@@ -39,6 +40,10 @@ export class BoolDTO implements IInput {
   intersect(other: IInput): IInput {
     if (!this.intersectsWith(other))
       throw new Error(`Cannot intersect types ${this} ${other}`);
+
+    // This may seem redundant, but might be useful in the future
+    if (other instanceof MissingVariableDTO)
+      return new BoolDTO(this.expression, this.boolVal);
 
     return new BoolDTO(this.expression, this.boolVal);
   }
@@ -53,6 +58,23 @@ export class BoolDTO implements IInput {
     return (
       this.expression === other.expression && this.boolVal === other.boolVal
     );
+  }
+}
+
+export class MissingVariableDTO implements IInput {
+  expression = Expression.MissingVariable;
+
+  intersectsWith(other: IInput): boolean {
+    return true;
+  }
+  intersect(other: IInput): IInput {
+    return other;
+  }
+  toString(): string {
+    return `*`;
+  }
+  equals(other: MissingVariableDTO) {
+    return true;
   }
 }
 
@@ -71,7 +93,7 @@ export class IntervalDTO implements IInput {
     expression: Expression,
     interval: Interval,
     precision: number,
-    isOpen: IsOpen = { hi: false, lo: false }
+    isOpen: IsOpen = { hi: false, lo: false },
   ) {
     this.expression = expression;
     this.interval = interval;
@@ -80,6 +102,7 @@ export class IntervalDTO implements IInput {
   }
 
   intersectsWith(other: IInput): boolean {
+    if (other instanceof MissingVariableDTO) return true;
     if (other instanceof IntervalDTO)
       return IOps.intervalsOverlap(this.interval, other.interval);
 
@@ -90,20 +113,27 @@ export class IntervalDTO implements IInput {
     if (!this.intersectsWith(other))
       throw new Error(`Cannot intersect types ${this} ${other}`);
 
+    if (other instanceof MissingVariableDTO)
+      return new IntervalDTO(this.expression, this.interval, this.precision);
+
     const that = other as IntervalDTO;
     return new IntervalDTO(
       this.expression,
       IOps.intersection(this.interval, that.interval),
-      this.precision
+      this.precision,
     );
   }
 
   toString(): string {
-    const left = this.interval.lo === -Infinity ? "-∞" : this.interval.lo.toString();
-    const right = this.interval.hi === Infinity ? "∞" : this.interval.hi.toString();
+    if (this.interval.lo === this.interval.hi) return `${this.interval.lo}`;
 
-    const leftBrace = this.isOpen.lo ? "(" : "[";
-    const rightBrace = this.isOpen.hi ? ")" : "]";
+    const left =
+      this.interval.lo === -Infinity ? '-∞' : this.interval.lo.toString();
+    const right =
+      this.interval.hi === Infinity ? '∞' : this.interval.hi.toString();
+
+    const leftBrace = this.isOpen.lo ? '(' : '[';
+    const rightBrace = this.isOpen.hi ? ')' : ']';
 
     return `${leftBrace}${left},${right}${rightBrace}`;
   }
@@ -115,8 +145,8 @@ export class IntervalDTO implements IInput {
       this.expression === other.expression &&
       IOps.equal(this.interval, other.interval) &&
       this.precision === other.precision &&
-      this.isOpen.hi === this.isOpen.hi &&
-      this.isOpen.lo === this.isOpen.lo
+      this.isOpen.hi === other.isOpen.hi &&
+      this.isOpen.lo === other.isOpen.lo
     );
   }
 }
@@ -127,6 +157,9 @@ export namespace IInput {
       if (x instanceof BoolDTO && y instanceof BoolDTO) return x.equals(y);
 
       if (x instanceof IntervalDTO && y instanceof IntervalDTO)
+        return x.equals(y);
+
+      if (x instanceof MissingVariableDTO && y instanceof MissingVariableDTO)
         return x.equals(y);
 
       return false;

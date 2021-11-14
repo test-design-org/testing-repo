@@ -1,5 +1,4 @@
 import { NTuple } from './models/ntuple';
-import { number, option } from 'fp-ts';
 import { Ord, fromCompare } from 'fp-ts/Ord';
 import * as N from 'fp-ts/number';
 

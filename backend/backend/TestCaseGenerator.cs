@@ -243,7 +243,7 @@ namespace backend
                 2 => new (
                         input.Expression,
                         Interval.NumToInf(
-                            input.Interval.IntervalData.Low + (input.Interval.IsOpen.Low ? 2 : 3) * input.Precision,
+                            input.Interval.IntervalData.Low + (input.Interval.IsOpen.Low ? 3 : 2) * input.Precision,
                             false
                             ),
                             input.Precision

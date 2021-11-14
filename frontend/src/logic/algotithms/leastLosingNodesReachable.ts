@@ -1,12 +1,8 @@
-import { min } from 'fp-ts/lib/NonEmptyArray';
-import { Edge, Graph } from '../graph';
-import * as NonEmptyArray from 'fp-ts/NonEmptyArray';
-import * as Option from 'fp-ts/Option';
+import {  Graph } from '../graph';
 import {
   dfs,
   joinNodesOnEdge,
   minimumBy,
-  numberOfConnectedComponentsComponents,
 } from './common';
 import { createGraphUrl } from '../graphGenerator';
 import { NTuple } from '../models/ntuple';

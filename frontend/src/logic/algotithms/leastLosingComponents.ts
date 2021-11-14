@@ -1,7 +1,4 @@
-import { min } from 'fp-ts/lib/NonEmptyArray';
-import { Edge, Graph } from '../graph';
-import * as NonEmptyArray from 'fp-ts/NonEmptyArray';
-import * as Option from 'fp-ts/Option';
+import { Graph } from '../graph';
 import {
   joinNodesOnEdge,
   minimumBy,

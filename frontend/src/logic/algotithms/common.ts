@@ -1,4 +1,3 @@
-import { number } from 'fp-ts';
 import { union } from 'fp-ts/lib/Array';
 import { Edge, Graph } from '../graph';
 import { NTuple } from '../models/ntuple';

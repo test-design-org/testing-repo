@@ -7,6 +7,8 @@ import {
 import * as React from "react";
 import { Variable } from "../models/Types";
 import DeleteButton from "./DeleteButton";
+import { useBoolean } from "@fluentui/react-hooks";
+import { AddVariableDialog } from "./AddVariableDialog";
 
 /**
  * This is the Module header on the top
@@ -45,9 +47,9 @@ const columns: IColumn[] = [
     isPadded: true,
   },
   {
-    key: "value",
-    name: "Value",
-    fieldName: "value",
+    key: "precision",
+    name: "Precision",
+    fieldName: "precision",
     minWidth: 210,
     maxWidth: 350,
     data: "string",
@@ -89,15 +91,23 @@ const VariableSetter: React.FunctionComponent<VariableSetterProps> = ({
     key: variable.name,
     name: variable.name,
     type: variable.type,
-    value: variable.value,
+    precision: variable.precision !== undefined ? variable.precision : "-",
     delete: (
       <DeleteButton setVariables={setVariables} variableName={variable.name} />
     ),
   }));
 
+  const [hideDialog, { toggle: toggleHideDialog }] = useBoolean(true);
+
   return (
     <>
-      <PrimaryButton text="Add" />
+      <PrimaryButton onClick={toggleHideDialog} text="Add variable" />
+      <AddVariableDialog
+        hideDialog={hideDialog}
+        toggleHideDialog={toggleHideDialog}
+        variables={variables}
+        setVariables={setVariables}
+      />
       <DetailsList
         items={items}
         columns={columns}

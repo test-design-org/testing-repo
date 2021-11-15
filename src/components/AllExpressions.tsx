@@ -32,6 +32,7 @@ const AllExpressions = ({
 }: AllExpressionsProps) => {
   return (
     <>
+      <button onClick={() => setConstraints(xs => [...xs, []])}>Add Expression Group</button>
       {allConstraints.map((constraints, index) => (
         <div key={uuidv4()} style={{ boxShadow: theme.effects.elevation8 }}>
           <ExpressionGroup

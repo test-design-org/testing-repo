@@ -1,3 +1,4 @@
+import { EXPRESSION_TYPES } from "@babel/types";
 import {
   DefaultButton,
   FocusZone,
@@ -11,7 +12,7 @@ import {
 } from "@fluentui/react";
 import * as React from "react";
 import { useState } from "react";
-import { Constraint, Variable } from "../models/Types";
+import { Constraint, ExpressionType, Variable } from "../models/Types";
 import Expression from "./Expression";
 
 const theme: ITheme = getTheme();
@@ -80,6 +81,12 @@ const ExpressionGroup: React.FunctionComponent<ExpressionGroupProps> = ({
 }: ExpressionGroupProps) => {
   return (
     <FocusZone direction={FocusZoneDirection.vertical}>
+      <button onClick={() => setConstraints(xs => 
+        xs.map((ys,i) => 
+          i !== constraintGroupId
+            ? ys 
+            : [...ys, { type: ExpressionType.EqualTo, variable: allVariables[0] }]))}
+      >Add Expression</button>
       <div className={classNames.container} data-is-scrollable>
         <List
           items={allConstraints[constraintGroupId]}

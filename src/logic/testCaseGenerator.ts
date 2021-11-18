@@ -2,7 +2,7 @@ import { array } from 'fp-ts';
 import { Interval } from 'interval-arithmetic';
 import {
   BoolDTO,
-  Expression,
+  InputExpression,
   IInput,
   IntervalDTO,
   MissingVariableDTO,
@@ -22,26 +22,26 @@ export function generateTestCases(inputs: IInput[]): NTuple[] {
 const calculateInOnPatterns1 = (inputs: IInput[]): IInput[] =>
   inputs.map((input) => {
     switch (input.expression) {
-      case Expression.LessThan:
-      case Expression.LessThanOrEqualTo:
+      case InputExpression.LessThan:
+      case InputExpression.LessThanOrEqualTo:
         return InIn(input, 1);
 
-      case Expression.GreaterThan:
-      case Expression.GreaterThanOrEqualTo:
+      case InputExpression.GreaterThan:
+      case InputExpression.GreaterThanOrEqualTo:
         return InIn(input, 2);
 
-      case Expression.NotEqualTo:
+      case InputExpression.NotEqualTo:
         return In(input, 2);
 
-      case Expression.EqualTo:
+      case InputExpression.EqualTo:
         return On(input);
 
-      case Expression.BoolTrue:
-      case Expression.BoolFalse:
-      case Expression.MissingVariable:
+      case InputExpression.BoolTrue:
+      case InputExpression.BoolFalse:
+      case InputExpression.MissingVariable:
         return input;
 
-      case Expression.Interval:
+      case InputExpression.Interval:
         return On(input, 2);
     }
   });
@@ -49,26 +49,26 @@ const calculateInOnPatterns1 = (inputs: IInput[]): IInput[] =>
 const calculateInOnPatterns2 = (inputs: IInput[]): IInput[] =>
   inputs.map((input) => {
     switch (input.expression) {
-      case Expression.LessThan:
-      case Expression.LessThanOrEqualTo:
+      case InputExpression.LessThan:
+      case InputExpression.LessThanOrEqualTo:
         return On(input, 1);
 
-      case Expression.EqualTo:
+      case InputExpression.EqualTo:
         return On(input);
 
-      case Expression.GreaterThan:
-      case Expression.GreaterThanOrEqualTo:
+      case InputExpression.GreaterThan:
+      case InputExpression.GreaterThanOrEqualTo:
         return On(input, 2);
 
-      case Expression.NotEqualTo:
+      case InputExpression.NotEqualTo:
         return In(input, 1);
 
-      case Expression.BoolTrue:
-      case Expression.BoolFalse:
-      case Expression.MissingVariable:
+      case InputExpression.BoolTrue:
+      case InputExpression.BoolFalse:
+      case InputExpression.MissingVariable:
         return input;
 
-      case Expression.Interval:
+      case InputExpression.Interval:
         return On(input, 1);
     }
   });
@@ -76,24 +76,24 @@ const calculateInOnPatterns2 = (inputs: IInput[]): IInput[] =>
 const baseline = (inputs: IInput[]): IInput[] =>
   inputs.map((input) => {
     switch (input.expression) {
-      case Expression.LessThan:
-      case Expression.LessThanOrEqualTo:
+      case InputExpression.LessThan:
+      case InputExpression.LessThanOrEqualTo:
         return In(input, 1);
 
-      case Expression.GreaterThan:
-      case Expression.GreaterThanOrEqualTo:
-      case Expression.NotEqualTo:
+      case InputExpression.GreaterThan:
+      case InputExpression.GreaterThanOrEqualTo:
+      case InputExpression.NotEqualTo:
         return In(input, 2);
 
-      case Expression.EqualTo:
+      case InputExpression.EqualTo:
         return On(input);
 
-      case Expression.BoolTrue:
-      case Expression.BoolFalse:
-      case Expression.MissingVariable:
+      case InputExpression.BoolTrue:
+      case InputExpression.BoolFalse:
+      case InputExpression.MissingVariable:
         return input;
 
-      case Expression.Interval:
+      case InputExpression.Interval:
         return In(input, 3);
     }
   });
@@ -108,8 +108,8 @@ function OffOut(inputs: IInput[]): IInput[][] {
     var based2 = baseline(inputs);
 
     switch (inputs[i].expression) {
-      case Expression.LessThan:
-      case Expression.LessThanOrEqualTo:
+      case InputExpression.LessThan:
+      case InputExpression.LessThanOrEqualTo:
         based1[i] = Out(inputs[i], 1);
         based2[i] = Off(inputs[i], 1);
 
@@ -117,8 +117,8 @@ function OffOut(inputs: IInput[]): IInput[][] {
         output.push(based2);
         break;
 
-      case Expression.GreaterThan:
-      case Expression.GreaterThanOrEqualTo:
+      case InputExpression.GreaterThan:
+      case InputExpression.GreaterThanOrEqualTo:
         based1[i] = Out(inputs[i], 2);
         based2[i] = Off(inputs[i], 2);
 
@@ -126,7 +126,7 @@ function OffOut(inputs: IInput[]): IInput[][] {
         output.push(based2);
         break;
 
-      case Expression.EqualTo:
+      case InputExpression.EqualTo:
         based1[i] = Out(inputs[i], 3);
         based2[i] = Out(inputs[i], 4);
 
@@ -134,23 +134,23 @@ function OffOut(inputs: IInput[]): IInput[][] {
         output.push(based2);
         break;
 
-      case Expression.NotEqualTo:
+      case InputExpression.NotEqualTo:
         based1[i] = Off(inputs[i]);
 
         output.push(based1);
         break;
 
-      case Expression.BoolTrue:
+      case InputExpression.BoolTrue:
         based1[i] = new BoolDTO(inputs[i].expression, false);
         output.push(based1);
         break;
 
-      case Expression.BoolFalse:
+      case InputExpression.BoolFalse:
         based1[i] = new BoolDTO(inputs[i].expression, true);
         output.push(based1);
         break;
 
-      case Expression.Interval:
+      case InputExpression.Interval:
         var based3 = baseline(inputs);
         var based4 = baseline(inputs);
 

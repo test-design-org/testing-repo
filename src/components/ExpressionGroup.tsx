@@ -10,9 +10,11 @@ import {
   List,
   mergeStyleSets,
 } from "@fluentui/react";
+import { Interval } from "interval-arithmetic";
 import * as React from "react";
 import { useState } from "react";
-import { Constraint, ExpressionType, Variable } from "../models/Types";
+import { BoolDTO, IInput, InputExpression, IntervalDTO } from "../logic/models/dtos";
+import { Constraint, ExpressionType, Variable, VariableType } from "../models/Types";
 import Expression from "./Expression";
 
 const theme: ITheme = getTheme();
@@ -66,6 +68,13 @@ const classNames = mergeStyleSets({
   },
 });
 
+function defaultDto(variable: Variable): BoolDTO | IntervalDTO {
+  if(variable.type === VariableType.BooleanType)
+    return new BoolDTO(InputExpression.BoolTrue, true);
+
+  return new IntervalDTO(InputExpression.LessThan, new Interval(-Infinity, 1), variable.precision!);
+}
+
 type ExpressionGroupProps = {
   allConstraints: Constraint[][];
   setConstraints: React.Dispatch<React.SetStateAction<Constraint[][]>>;
@@ -79,13 +88,14 @@ const ExpressionGroup: React.FunctionComponent<ExpressionGroupProps> = ({
   allVariables,
   constraintGroupId,
 }: ExpressionGroupProps) => {
+  
   return (
     <FocusZone direction={FocusZoneDirection.vertical}>
       <button onClick={() => setConstraints(xs => 
         xs.map((ys,i) => 
           i !== constraintGroupId
             ? ys 
-            : [...ys, { type: ExpressionType.EqualTo, variable: allVariables[0] }]))}
+            : [...ys, { type: ExpressionType.EqualTo, variable: allVariables[0], dto: defaultDto(allVariables[0]) }]))}
       >Add Expression</button>
       <div className={classNames.container} data-is-scrollable>
         <List

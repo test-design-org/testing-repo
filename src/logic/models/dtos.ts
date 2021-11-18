@@ -1,7 +1,7 @@
 import { Eq } from 'fp-ts/lib/Eq';
 import IOps, { Interval } from 'interval-arithmetic';
 
-export enum Expression {
+export enum InputExpression {
   LessThan,
   LessThanOrEqualTo,
   GreaterThan,
@@ -15,17 +15,17 @@ export enum Expression {
 }
 
 export interface IInput {
-  expression: Expression;
+  expression: InputExpression;
   intersectsWith(other: IInput): boolean;
   intersect(other: IInput): IInput;
   toString(): string;
 }
 
 export class BoolDTO implements IInput {
-  expression: Expression;
+  expression: InputExpression;
   boolVal: boolean;
 
-  constructor(expression: Expression, boolVal: boolean) {
+  constructor(expression: InputExpression, boolVal: boolean) {
     this.expression = expression;
     this.boolVal = boolVal;
   }
@@ -62,7 +62,7 @@ export class BoolDTO implements IInput {
 }
 
 export class MissingVariableDTO implements IInput {
-  expression = Expression.MissingVariable;
+  expression = InputExpression.MissingVariable;
 
   intersectsWith(other: IInput): boolean {
     return true;
@@ -84,13 +84,13 @@ export interface IsOpen {
 }
 
 export class IntervalDTO implements IInput {
-  expression: Expression;
+  expression: InputExpression;
   interval: Interval;
   isOpen: IsOpen;
   precision: number;
 
   constructor(
-    expression: Expression,
+    expression: InputExpression,
     interval: Interval,
     precision: number,
     isOpen: IsOpen = { hi: false, lo: false },

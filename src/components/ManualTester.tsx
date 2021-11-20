@@ -50,6 +50,7 @@ true;>=50;*
         setGraphs(newGraphs);
       } catch (error) {
         alert(error);
+        console.log(error);
       }
       setIsLoading(false);
     }

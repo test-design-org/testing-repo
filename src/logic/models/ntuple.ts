@@ -2,9 +2,11 @@ import { IInput } from './dtos';
 import { zip } from 'fp-ts/Array';
 import { Eq } from 'fp-ts/lib/Eq';
 import { array } from 'fp-ts';
+import { v4 as uuidv4 } from 'uuid';
 
 export class NTuple {
   readonly list: IInput[];
+  readonly id = uuidv4();
 
   constructor(list: IInput[]) {
     this.list = list;

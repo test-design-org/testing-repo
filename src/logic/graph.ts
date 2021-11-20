@@ -75,4 +75,12 @@ export class Graph {
       ([x, y, _]) => !NTuple.Eq.equals(x, node) && !NTuple.Eq.equals(y, node),
     );
   }
+
+  getNode(id: string) {
+    const node = this.nodes.find((x) => x.id === id);
+    if (node === undefined)
+      throw new Error(`Node with id ${id} not found in graph`);
+
+    return node;
+  }
 }

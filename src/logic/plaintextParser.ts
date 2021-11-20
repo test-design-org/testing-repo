@@ -107,7 +107,7 @@ export function parseTestCases(variables: Variable[], line: string): IInput[] {
   return inputs;
 }
 
-export function parseInput(input: string): IInput[][] {
+export function parseInput(input: string): [Variable[], IInput[][]] {
   const lines = input.trim().split('\n');
 
   const variables = lines[0].split(';').map(parseVariable);
@@ -115,5 +115,5 @@ export function parseInput(input: string): IInput[][] {
 
   const inputs = testCases.map((x) => parseTestCases(variables, x));
 
-  return inputs;
+  return [variables, inputs];
 }

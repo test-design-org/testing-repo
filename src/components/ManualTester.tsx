@@ -5,27 +5,42 @@ import { runMONKE } from '../logic/algotithms/MONKE';
 import { Graph } from '../logic/graph';
 import { generateGraph, createGraphUrl } from '../logic/graphGenerator';
 import { parseInput } from '../logic/plaintextParser';
+import { generateTestValue } from '../logic/testValueGenerator';
 
 interface Graphs {
-  original: Graph;
-  MONKE: Graph;
-  leastComponents: Graph;
-  leastNodes: Graph;
+  original: readonly [Graph, number];
+  MONKE: readonly [Graph, number];
+  leastComponents: readonly [Graph, number];
+  leastNodes: readonly [Graph, number];
 }
 
 function generateGraphs(input: string) {
-  const inputs = parseInput(input);
-  const graph = generateGraph(inputs);
+  const [_variables, testCases] = parseInput(input);
 
+  const beforeGraph = performance.now();
+  const graph = generateGraph(testCases);
+  const afterGraph = performance.now();
+
+  const beforeMonkeGraph = performance.now();
   const monkeGraph = runMONKE(graph);
+  const afterMonkeGraph = performance.now();
+
+  const beforeLCGraph = performance.now();
   const leastLosingComponentsGraph = runLeastLosingComponents(graph);
+  const afterLCGraph = performance.now();
+
+  const beforeLNGraph = performance.now();
   const leastLosingNodesGraph = runLeastLosingNodesReachable(graph);
+  const afterLNGraph = performance.now();
 
   return {
-    original: graph,
-    MONKE: monkeGraph,
-    leastComponents: leastLosingComponentsGraph,
-    leastNodes: leastLosingNodesGraph,
+    original: [graph, afterGraph - beforeGraph] as const,
+    MONKE: [monkeGraph, afterMonkeGraph - beforeMonkeGraph] as const,
+    leastComponents: [
+      leastLosingComponentsGraph,
+      afterLCGraph - beforeLCGraph,
+    ] as const,
+    leastNodes: [leastLosingNodesGraph, afterLNGraph - beforeLNGraph] as const,
   };
 }
 
@@ -73,31 +88,57 @@ true;>=50;*
       ) : (
         <div>
           <p>
-            Original graph nodes: {graphs.original.nodes.length}{' '}
-            <a href={createGraphUrl(graphs.original)} target="_blank">
+            Original graph nodes: {graphs.original[0].nodes.length}{' '}
+            <a href={createGraphUrl(graphs.original[0])} target="_blank">
               link
             </a>
+            &nbsp;{graphs.original[1]}ms
           </p>
           <p>
-            MONKE graph nodes: {graphs.MONKE.nodes.length}{' '}
-            <a href={createGraphUrl(graphs.MONKE)} target="_blank">
+            MONKE graph nodes: {graphs.MONKE[0].nodes.length}{' '}
+            <a href={createGraphUrl(graphs.MONKE[0])} target="_blank">
               link
             </a>
+            &nbsp;{graphs.MONKE[1]}ms
           </p>
           <p>
             Least Losing Component Count graph nodes:{' '}
-            {graphs.leastComponents.nodes.length}{' '}
-            <a href={createGraphUrl(graphs.leastComponents)} target="_blank">
+            {graphs.leastComponents[0].nodes.length}{' '}
+            <a href={createGraphUrl(graphs.leastComponents[0])} target="_blank">
               link
             </a>
+            &nbsp;{graphs.leastComponents[1]}ms
           </p>
           <p>
             Least Losing Connected Nodes graph nodes:{' '}
-            {graphs.leastNodes.nodes.length}{' '}
-            <a href={createGraphUrl(graphs.leastNodes)} target="_blank">
+            {graphs.leastNodes[0].nodes.length}{' '}
+            <a href={createGraphUrl(graphs.leastNodes[0])} target="_blank">
               link
             </a>
+            &nbsp;{graphs.leastNodes[1]}ms
           </p>
+
+          <p>MONKE results: </p>
+          <table className="testValueTable">
+            <thead>
+              <tr>
+                <th></th>
+                {parseInput(input)[0].map((x) => (
+                  <th>{x.name}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {graphs.MONKE[0].nodes.map((nNuple, index) => (
+                <tr>
+                  <td>T{index + 1}</td>
+                  {nNuple.list.map((x) => (
+                    <td>{generateTestValue(x)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
       <div>
@@ -184,7 +225,7 @@ true;>=50;*
               <br />
               [18,45);[15,30)
               <br />
-              [18,45);&gt;=30
+              [18,60);&gt;=30
               <br />
               [45,60);&lt;30
               <br />

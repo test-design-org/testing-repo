@@ -216,7 +216,7 @@ describe('parseInput', () => {
 
     expect(result.length).toBe(2);
 
-    const firstCase = result[0];
+    const firstCase = result[1][0];
 
     expect(firstCase[0]).toBeInstanceOf(BoolDTO);
     expect(firstCase[0]).toEqual({
@@ -233,7 +233,7 @@ describe('parseInput', () => {
 
     expect(firstCase[2]).toBeInstanceOf(MissingVariableDTO);
 
-    const secondCase = result[1];
+    const secondCase = result[1][1];
     expect(secondCase[0]).toBeInstanceOf(MissingVariableDTO);
 
     expect(secondCase[1]).toBeInstanceOf(IntervalDTO);

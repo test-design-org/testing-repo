@@ -57,6 +57,8 @@ true;>=50;*
       <textarea
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        rows={20}
+        cols={80}
       ></textarea>
       {isLoading ? 'loading...' : 'Loaded'}
       {!isLoading && (

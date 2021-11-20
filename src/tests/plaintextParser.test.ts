@@ -150,8 +150,29 @@ describe('parseTestCase', () => {
     });
   });
 
-  // TODO: finish interval test cases
-  describe('interval case', () => {});
+  describe('interval case', () => {
+    it('should parse (10,22.3]', () => {
+      const result = parseTestCase(new NumberVariable('x', 0.1), '(10,22.3]');
+
+      expect(result).toBeInstanceOf(IntervalDTO);
+      const dto = result as IntervalDTO;
+      expect(dto.expression).toBe(Expression.Interval);
+      expect(dto.interval.lo).toBe(10);
+      expect(dto.interval.hi).toBe(22.3);
+      expect(dto.isOpen).toEqual({ lo: true, hi: false });
+    });
+
+    it('should parse [10.12,22)', () => {
+      const result = parseTestCase(new NumberVariable('x', 0.1), '[10.12,22)');
+
+      expect(result).toBeInstanceOf(IntervalDTO);
+      const dto = result as IntervalDTO;
+      expect(dto.expression).toBe(Expression.Interval);
+      expect(dto.interval.lo).toBe(10.12);
+      expect(dto.interval.hi).toBe(22);
+      expect(dto.isOpen).toEqual({ lo: false, hi: true });
+    });
+  });
 
   describe('wrong input', () => {
     it('should throw error on wrong input', () => {

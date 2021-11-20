@@ -36,26 +36,23 @@ export function minimumBy<T>(list: T[], lens: (_: T) => number): T {
 }
 
 export function numberOfConnectedComponentsComponents(graph: Graph): number {
-  const ids = graph.nodes.map((node, id) => [node, id] as const);
-  const getId = (node: NTuple) => ids.find((x) => x[0] === node)![1];
+  const visited = new Map<string, boolean>();
 
-  const DFSUtil = (nodeId: number, visited: boolean[]) => {
-    visited[nodeId] = true;
+  const DFSUtil = (node: NTuple) => {
+    visited.set(node.id, true);
 
-    const neighbours = graph.getNeighbours(graph.nodes[nodeId]).map(getId);
-    for (const neighbourId of neighbours) {
-      if (!visited[neighbourId]) {
-        DFSUtil(neighbourId, visited);
+    const neighbours = graph.getNeighbours(node);
+    for (const neighbour of neighbours) {
+      if (!visited.get(neighbour.id)) {
+        DFSUtil(neighbour);
       }
     }
   };
 
-  const visited = new Array(graph.nodes.length).map((_) => false);
-
   let componentCount = 0;
-  for (let nodeId = 0; nodeId < visited.length; ++nodeId) {
-    if (!visited[nodeId]) {
-      DFSUtil(nodeId, visited);
+  for (const node of graph.nodes) {
+    if (!visited.get(node.id)) {
+      DFSUtil(node);
       ++componentCount;
     }
   }
@@ -70,22 +67,19 @@ export function dfs(
     discoverNode?: (node: NTuple) => void;
   },
 ): void {
-  const ids = graph.nodes.map((node, id) => [node, id] as const);
-  const getId = (node: NTuple) => ids.find((x) => x[0] === node)![1];
+  const visited = new Map<string, boolean>();
 
-  const DFSUtil = (nodeId: number, visited: boolean[]) => {
-    visited[nodeId] = true;
-    events.discoverNode?.(graph.nodes[nodeId]);
+  const DFSUtil = (node: NTuple) => {
+    visited.set(node.id, true);
+    events.discoverNode?.(node);
 
-    const neighbours = graph.getNeighbours(graph.nodes[nodeId]).map(getId);
-    for (const neighbourId of neighbours) {
-      if (!visited[neighbourId]) {
-        DFSUtil(neighbourId, visited);
+    const neighbours = graph.getNeighbours(node);
+    for (const neighbour of neighbours) {
+      if (!visited.get(neighbour.id)) {
+        DFSUtil(neighbour);
       }
     }
   };
 
-  const visited = new Array(graph.nodes.length).map((_) => false);
-
-  DFSUtil(getId(startingNode), visited);
+  DFSUtil(startingNode);
 }

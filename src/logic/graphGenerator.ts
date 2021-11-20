@@ -21,8 +21,10 @@ export function generateGraph(inputs: IInput[][]): Graph {
 }
 
 export function createGraphUrl(graph: Graph): string {
-  const ids = graph.nodes.map((node, id) => [node, id] as const);
-  const getId = (node: NTuple) => ids.find((x) => x[0] === node)![1];
+  const mapping = new Map<string, number>(
+    graph.nodes.map((x, index) => [x.id, index]),
+  );
+  const getId = (node: NTuple) => mapping.get(node.id);
 
   const nodes = graph.nodes
     .map((node) => `${getId(node)} [label="${node}"]`)

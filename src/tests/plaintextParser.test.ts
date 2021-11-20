@@ -95,13 +95,13 @@ describe('parseTestCase', () => {
     });
 
     it('should parse <=', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '<=30');
+      const result = parseTestCase(new NumberVariable('x', 0.1), '<=-30');
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
       expect(dto.expression).toBe(Expression.LessThanOrEqualTo);
       expect(dto.interval.lo).toBe(-Infinity);
-      expect(dto.interval.hi).toBe(30);
+      expect(dto.interval.hi).toBe(-30);
       expect(dto.isOpen).toEqual({ lo: true, hi: false });
     });
 
@@ -128,13 +128,13 @@ describe('parseTestCase', () => {
     });
 
     it('should parse =', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '=30');
+      const result = parseTestCase(new NumberVariable('x', 0.1), '=-30');
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
       expect(dto.expression).toBe(Expression.EqualTo);
-      expect(dto.interval.lo).toBe(30);
-      expect(dto.interval.hi).toBe(30);
+      expect(dto.interval.lo).toBe(-30);
+      expect(dto.interval.hi).toBe(-30);
       expect(dto.isOpen).toEqual({ lo: false, hi: false });
     });
 
@@ -151,13 +151,13 @@ describe('parseTestCase', () => {
   });
 
   describe('interval case', () => {
-    it('should parse (10,22.3]', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '(10,22.3]');
+    it('should parse (-10,22.3]', () => {
+      const result = parseTestCase(new NumberVariable('x', 0.1), '(-10,22.3]');
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
       expect(dto.expression).toBe(Expression.Interval);
-      expect(dto.interval.lo).toBe(10);
+      expect(dto.interval.lo).toBe(-10);
       expect(dto.interval.hi).toBe(22.3);
       expect(dto.isOpen).toEqual({ lo: true, hi: false });
     });

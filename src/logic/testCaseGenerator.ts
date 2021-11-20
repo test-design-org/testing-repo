@@ -212,7 +212,7 @@ function In(input: IInput, version: 1 | 2 | 3): IInput {
         input.expression,
         new Interval(
           -Infinity,
-          input.interval.hi - (input.isOpen.hi ? 2 : 1) * input.precision,
+          input.interval.hi - (input.isOpen.hi ? 1 : 0) * input.precision,
         ),
         input.precision,
       );
@@ -221,7 +221,7 @@ function In(input: IInput, version: 1 | 2 | 3): IInput {
       return new IntervalDTO(
         input.expression,
         new Interval(
-          input.interval.lo + (input.isOpen.lo ? 2 : 1) * input.precision,
+          input.interval.lo + (input.isOpen.lo ? 1 : 0) * input.precision,
           Infinity,
         ),
         input.precision,
@@ -231,8 +231,8 @@ function In(input: IInput, version: 1 | 2 | 3): IInput {
       return new IntervalDTO(
         input.expression,
         new Interval(
-          input.interval.lo + (input.isOpen.lo ? 2 : 1) * input.precision,
-          input.interval.hi - (input.isOpen.hi ? 2 : 1) * input.precision,
+          input.interval.lo + (input.isOpen.lo ? 1 : 0) * input.precision,
+          input.interval.hi - (input.isOpen.hi ? 1 : 0) * input.precision,
         ),
         input.precision,
       );
@@ -250,7 +250,7 @@ function InIn(input: IInput, version: 1 | 2): IInput {
         input.expression,
         new Interval(
           -Infinity,
-          input.interval.hi - (input.isOpen.hi ? 3 : 2) * input.precision,
+          input.interval.hi - (input.isOpen.hi ? 2 : 1) * input.precision,
         ),
         input.precision,
       );
@@ -259,7 +259,7 @@ function InIn(input: IInput, version: 1 | 2): IInput {
       return new IntervalDTO(
         input.expression,
         new Interval(
-          input.interval.lo + (input.isOpen.lo ? 3 : 2) * input.precision,
+          input.interval.lo + (input.isOpen.lo ? 2 : 1) * input.precision,
           Infinity,
         ),
         input.precision,

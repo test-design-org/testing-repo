@@ -4,10 +4,11 @@ import { runLeastLosingNodesReachable } from '../logic/algotithms/leastLosingNod
 import { runMONKE } from '../logic/algotithms/MONKE';
 import { Graph } from '../logic/graph';
 import { generateGraph, createGraphUrl } from '../logic/graphGenerator';
-import { parseInput } from '../logic/plaintextParser';
+import { parseInput, Variable } from '../logic/plaintextParser';
 import { generateTestValue } from '../logic/testValueGenerator';
 
 interface Graphs {
+  variables: Variable[];
   original: readonly [Graph, number];
   MONKE: readonly [Graph, number];
   leastComponents: readonly [Graph, number];
@@ -15,7 +16,7 @@ interface Graphs {
 }
 
 function generateGraphs(input: string) {
-  const [_variables, testCases] = parseInput(input);
+  const [variables, testCases] = parseInput(input);
 
   const beforeGraph = performance.now();
   const graph = generateGraph(testCases);
@@ -34,6 +35,7 @@ function generateGraphs(input: string) {
   const afterLNGraph = performance.now();
 
   return {
+    variables,
     original: [graph, afterGraph - beforeGraph] as const,
     MONKE: [monkeGraph, afterMonkeGraph - beforeMonkeGraph] as const,
     leastComponents: [
@@ -59,6 +61,7 @@ true;>=50;*
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    console.log('hmmm');
     if (isLoading) {
       try {
         const newGraphs = generateGraphs(input);
@@ -123,7 +126,7 @@ true;>=50;*
             <thead>
               <tr>
                 <th></th>
-                {parseInput(input)[0].map((x) => (
+                {graphs.variables.map((x) => (
                   <th>{x.name}</th>
                 ))}
               </tr>

@@ -1,0 +1,68 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-items: left;
+    justify-content: space-around;
+    width: clamp(768px, 80%, 1200px);
+    margin: 0 auto;
+    padding: 20px;
+
+    .leftInput {
+        display: flex;
+        flex-direction: column;
+
+        textarea {
+            width: 600px;
+            border: 1px solid #8ec758;
+            background: transparent;
+            color: #bcf08c;
+            font-size: 1.1rem;
+        }
+
+        button {
+            background-color: #50ac8d;
+            border: none;
+            color: #282c34;
+            font-size: 1.2rem;
+            padding: 5px;
+            border-radius: 3px;
+        }
+    }
+
+    .rightOutput {
+        table {
+            border: 1px solid #8ec758;
+            border-collapse: collapse;
+
+            color: #bcf08c;
+
+            td, th {
+                border: 1px solid #8ec758;
+                padding: 5px;
+            }
+        }
+    }
+}
+
+.usageContainer {
+    width: 600px;
+    margin: 0 auto;
+
+    .toggleButton {
+        margin-left: 10px;;
+        background-color: transparent;
+        color: #8ec758;
+        border: 2px solid #8ec758;
+        border-radius: 5px;
+    }
+
+    .usageText {
+        &.hidden {
+            display: none;
+        }
+    }
+}
+
+code {
+    color: #50ac8d;
+}

@@ -52,15 +52,17 @@ function generateGraphs(input: string) {
 function ManualTester() {
   const [input, setInput] = useState(
     `
-VIP(boolean);price(number,0.01);second_hand_price(number,0.01)
-true;<50;*
-false;>=50;*
-true;>=50;*
-*;>30;>60
+// This is an example. You should replace this with your own test description.
+
+VIP(bool); price(num); second_hand_price(num)
+true;   <50; *
+false; >=50; *
+true;  >=50; *
+*;      >30; >60
   `.trim(),
   );
 
-  const [graphs, setGraphs] = useState<Graphs>(() => generateGraphs(input));
+  const [graphs, setGraphs] = useState<Graphs | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [isHelpHidden, setIsHelpHidden] = useState(true);
   const [showIntervalValues, setShowIntervalValues] = useState(true);
@@ -83,20 +85,34 @@ true;>=50;*
     <>
       <div className="container">
         <div className="leftInput">
+          <h2>General predicate test description</h2>
           <textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             rows={20}
           ></textarea>
-          <button onClick={(_) => setIsLoading(true)} disabled={isLoading}>
-            Regenerate Graphs
-          </button>
+          <h2>Requirements</h2>
+          <textarea rows={10}>
+            Paste your requirements into this textarea, so you don't have to
+            switch to other tabs in your browser to write yours test
+            descriptions up above.
+          </textarea>
+          <div className="buttons">
+            <button onClick={(_) => setIsLoading(true)} disabled={isLoading}>
+              Generate Tests
+            </button>
+            <button
+              onClick={() => setIsHelpHidden((x) => !x)}
+              className="toggleButton"
+            >
+              {isHelpHidden ? 'Open' : 'Close'} user guide
+            </button>
+          </div>
         </div>
         <div className="rightOutput">
-          {isLoading ? (
-            'Loading...'
-          ) : (
+          {!isLoading && graphs !== undefined && (
             <>
+              <h2>Generated test cases</h2>
               <label htmlFor="showIntervalValues">
                 <input
                   type="checkbox"
@@ -131,35 +147,46 @@ true;>=50;*
           )}
         </div>
       </div>
-      <div className="usageContainer">
-        <h2>
-          Usage guide
-          <button
-            onClick={() => setIsHelpHidden((x) => !x)}
-            className="toggleButton"
-          >
-            {isHelpHidden ? 'Open' : 'Close'}
-          </button>
-        </h2>
-        <div className={`usageText ${isHelpHidden ? 'hidden' : ''}`}>
+      <div className={`usageContainer ${isHelpHidden ? 'hidden' : ''}`}>
+        <h2>Usage guide</h2>
+        <div>
           <p>
             The first line should be the variable list, separated by semicolons{' '}
             <b>;</b>
+            <br />
+            You can only put whitespace between expressions (before or after
+            semicolons, beginning or end of a line), but not in the middle of
+            expressions!
           </p>
           <p>
-            Be careful not to put whitespaces anywhere! Floating point numbers
-            use a dot <b>.</b>
+            Floating point numbers use a dot <b>.</b>
+          </p>
+          <p>
+            You can leave lines empty, or create a whole commented line by
+            starting it with <code>//</code>
           </p>
           <p>
             One variable has this strucutre:
             <ul>
               <li>
-                <code>variableName(boolean)</code>
+                <code>variableName(bool)</code>
+                <br />
+                Boolean
               </li>
               <li>
-                <code>variableName(number,0.02)</code>
+                <code>variableName(int)</code>
                 <br />
-                where 0.02 is the number's precision.
+                Integer
+              </li>
+              <li>
+                <code>variableName(num)</code>
+                <br />
+                Number, where the precision defaults to 0.01
+              </li>
+              <li>
+                <code>variableName(num,0.02)</code>
+                <br />
+                Number, where the precision is 0.02
               </li>
             </ul>
           </p>
@@ -172,7 +199,7 @@ true;>=50;*
             <ul>
               <li>
                 *<br />
-                if there is n constraint on this variable in this test case
+                if there is no constraint on this variable in this test case
               </li>
               <li>
                 <code>true</code> or <code>false</code>
@@ -192,32 +219,37 @@ true;>=50;*
                 Intervals
               </li>
             </ul>
-            Example: You want to write a test case for the following:{' '}
+            Example: You want to write a test case for the following:
+            <br />
             <code>
-              isVIP = true AND price in (100,199.99] AND discount &gt; 20
+              IF isVIP = true AND price &gt; 100 AND price &lt;= 199.99 AND
+              discount &gt; 20
             </code>
             <br />
-            It will be: <code>true;(100,199.99];&gt;20</code>
+            It will be: <code>true; (100,199.99]; &gt;20</code>
           </p>
           <p>
             Another, complete example:
             <pre>
               <code>
-                age(number,1);service(number,1)
+                // Vacation example from
+                https://exercises.test-design.org/paid-vacation-days/
                 <br />
-                &lt;18;*
+                age(int); service(int)
                 <br />
-                [18,45);&lt;15
+                &lt;18; *
                 <br />
-                [18,45);[15,30)
+                [18,45); &lt;15
                 <br />
-                [18,60);&gt;=30
+                [18,45); [15,30)
                 <br />
-                [45,60);&lt;30
+                [18,60); &gt;=30
                 <br />
-                &gt;=60;&lt;30
+                [45,60); &lt;30
                 <br />
-                &gt;=60;&gt;=30
+                &gt;=60; &lt;30
+                <br />
+                &gt;=60; &gt;=30
                 <br />
               </code>
             </pre>

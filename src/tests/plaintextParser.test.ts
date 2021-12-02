@@ -14,36 +14,44 @@ import {
 
 describe('parseVariable', () => {
   it('parses a boolVariable', () => {
-    const result = parseVariable('varName(boolean)');
+    const result = parseVariable('varName(bool)');
 
     expect(result).toBeInstanceOf(BoolVariable);
     expect(result.name).toBe('varName');
   });
 
   it('parses a numberVariable with int precision', () => {
-    const result = parseVariable('x(number,1)');
+    const result = parseVariable('x(int)');
 
     expect(result).toBeInstanceOf(NumberVariable);
     expect(result).toEqual({ name: 'x', precision: 1 });
   });
 
-  it('parses a numberVariable with float precision', () => {
-    const result = parseVariable('x(number,0.01)');
+  it('parses a numberVariable with default precision', () => {
+    const result = parseVariable('x(num)');
 
     expect(result).toBeInstanceOf(NumberVariable);
     expect(result).toEqual({ name: 'x', precision: 0.01 });
   });
 
+  it('parses a numberVariable with float precision', () => {
+    const result = parseVariable('x(num,0.23)');
+
+    expect(result).toBeInstanceOf(NumberVariable);
+    expect(result).toEqual({ name: 'x', precision: 0.23 });
+  });
+
   it('throws an error on undefined pattern', () => {
     const testCases = [
-      'x(number,0.01,)',
-      'x(number,)',
+      'x(num,0.01,)',
+      'x(num,)',
+      'x(int,)',
       'x(number)',
       'asd',
       'asd()',
       'asd(boolean,)',
       'asd(bool,)',
-      'asd(bool)',
+      'asd(Bool)',
     ];
 
     for (const testCase of testCases) {
@@ -207,9 +215,14 @@ describe('parseTestCase', () => {
 describe('parseInput', () => {
   it('should parse the input correctly', () => {
     const testInput = `
-      VIP(boolean);price(number,1);second_hand_price(number,0.2)
-      true;<50;*
-      *;>30;<=60
+      // This is a comment, this should be ignored
+
+      VIP(bool); price(int); second_hand_price(num,0.2)
+      true   ; <50   ;   *  
+
+      // A comment can be anywhere
+      *; >30; <=60
+      
       `;
 
     const result = parseInput(testInput);

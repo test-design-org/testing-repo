@@ -17,15 +17,36 @@
             background: transparent;
             color: #bcf08c;
             font-size: 1.1rem;
+
+            &::-webkit-resizer {
+                border-width: 8px;
+                border-style: solid;
+                border-color: transparent #bcf08c #bcf08c transparent;
+            }
         }
 
-        button {
-            background-color: #50ac8d;
-            border: none;
-            color: #282c34;
-            font-size: 1.2rem;
-            padding: 5px;
-            border-radius: 3px;
+        .buttons {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            button {
+                background-color: mediumaquamarine; 
+                border: none; 
+                color: midnightblue; 
+                padding: 8px 16px; 
+                text-align: center; 
+                text-decoration: none; 
+                display: inline-block; 
+                font-size: 16px; 
+                margin: 4px 2px; 
+                cursor: pointer; 
+                
+                &:hover { 
+                    background-color: rgb(80, 172, 141); 
+                } 
+            }
         }
     }
 
@@ -48,18 +69,10 @@
     width: 600px;
     margin: 0 auto;
 
-    .toggleButton {
-        margin-left: 10px;;
-        background-color: transparent;
-        color: #8ec758;
-        border: 2px solid #8ec758;
-        border-radius: 5px;
-    }
 
-    .usageText {
-        &.hidden {
-            display: none;
-        }
+
+    &.hidden {
+        display: none;
     }
 }
 

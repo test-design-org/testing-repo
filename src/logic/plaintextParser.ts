@@ -20,8 +20,14 @@ export class NumberVariable {
 export type Variable = BoolVariable | NumberVariable;
 
 export function parseVariable(varString: string): Variable {
-  const boolRegex = /^(.*)\(boolean\)$/;
-  const numberRegex = /^(.*)\(number,([\d\.]+)\)$/;
+  const boolRegex = /^(.*)\(bool\)$/;
+  const intRegex = /^(.*)\(int\)$/;
+  const numberRegex = /^(.*)\(num(,([\d\.]+))?\)$/;
+
+  const intRegexMatch = intRegex.exec(varString);
+  if (intRegexMatch !== null) {
+    return new NumberVariable(intRegexMatch[1], 1);
+  }
 
   const boolRegexMatch = boolRegex.exec(varString);
   if (boolRegexMatch !== null) {
@@ -32,7 +38,7 @@ export function parseVariable(varString: string): Variable {
   if (numberRegexMatch !== null) {
     return new NumberVariable(
       numberRegexMatch[1],
-      parseFloat(numberRegexMatch[2]),
+      parseFloat(numberRegexMatch[3] ?? 0.01),
     );
   }
 
@@ -98,7 +104,10 @@ export function parseTestCase(variable: Variable, rawTestCase: string): IInput {
 }
 
 export function parseTestCases(variables: Variable[], line: string): IInput[] {
-  const rawTestCasesWithVariables = zip(variables, line.split(';'));
+  const rawTestCasesWithVariables = zip(
+    variables,
+    line.split(';').map((x) => x.trim()),
+  );
 
   const inputs = rawTestCasesWithVariables.map(([variable, rawTestCase]) =>
     parseTestCase(variable, rawTestCase),
@@ -108,10 +117,18 @@ export function parseTestCases(variables: Variable[], line: string): IInput[] {
 }
 
 export function parseInput(input: string): [Variable[], IInput[][]] {
-  const lines = input.trim().split('\n');
+  const lines = input
+    .trim()
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => !line.startsWith('//') && line !== '');
 
-  const variables = lines[0].split(';').map(parseVariable);
-  const testCases = lines.slice(1).map((line) => line.trim());
+  const variables = lines[0]
+    .split(';')
+    .map((x) => x.trim())
+    .map(parseVariable);
+
+  const testCases = lines.slice(1);
 
   const inputs = testCases.map((x) => parseTestCases(variables, x));
 

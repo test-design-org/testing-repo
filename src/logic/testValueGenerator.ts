@@ -7,10 +7,13 @@ import {
 
 export function generateTestValue(
   input: IInput,
-): number | 'true' | 'false' | '*' {
+  showIntervalValues: boolean,
+): number | string {
   if (input instanceof MissingVariableDTO) return '*';
 
   if (input instanceof BoolDTO) return input.boolVal ? 'true' : 'false';
+
+  if (showIntervalValues) return (input as IntervalDTO).toString();
 
   const interval = (input as IntervalDTO).interval;
   if (interval.lo === -Infinity) return interval.hi;

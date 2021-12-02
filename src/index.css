@@ -5,19 +5,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  background-color: #282c34;
+  color: #bcf08c;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
-
-.testValueTable {
-    border: 1px solid black;
-    border-collapse: collapse;
-}
-
-.testValueTable td, .testValueTable th {
-    border: 1px solid black;
-    padding: 2px;
 }

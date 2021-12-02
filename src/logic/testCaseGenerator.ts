@@ -20,6 +20,7 @@ export function generateTestCases(inputs: IInput[]): NTuple[] {
 }
 
 const calculateInOnPatterns1 = (inputs: IInput[]): IInput[] =>
+  // eslint-disable-next-line array-callback-return
   inputs.map((input) => {
     switch (input.expression) {
       case Expression.LessThan:
@@ -47,6 +48,7 @@ const calculateInOnPatterns1 = (inputs: IInput[]): IInput[] =>
   });
 
 const calculateInOnPatterns2 = (inputs: IInput[]): IInput[] =>
+  // eslint-disable-next-line array-callback-return
   inputs.map((input) => {
     switch (input.expression) {
       case Expression.LessThan:
@@ -74,6 +76,7 @@ const calculateInOnPatterns2 = (inputs: IInput[]): IInput[] =>
   });
 
 const baseline = (inputs: IInput[]): IInput[] =>
+  // eslint-disable-next-line array-callback-return
   inputs.map((input) => {
     switch (input.expression) {
       case Expression.LessThan:

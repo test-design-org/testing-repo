@@ -3,12 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { createGraphUrl, generateGraph } from './logic/graphGenerator';
-import { runMONKE } from './logic/algotithms/MONKE';
-import { numberOfConnectedComponentsComponents } from './logic/algotithms/common';
-import { runLeastLosingComponents } from './logic/algotithms/leastLosingComponents';
-import { runLeastLosingNodesReachable } from './logic/algotithms/leastLosingNodesReachable';
-import { BookStore } from './logic/testCases';
 
 ReactDOM.render(
   <React.StrictMode>

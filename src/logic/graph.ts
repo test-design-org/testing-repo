@@ -1,14 +1,6 @@
 import { NTuple } from './models/ntuple';
-import { Ord, fromCompare } from 'fp-ts/Ord';
-import * as N from 'fp-ts/number';
 
 export type Edge = [NTuple, NTuple, number];
-
-export namespace Edge {
-  export const Ord: Ord<Edge> = fromCompare((first, second) =>
-    N.Ord.compare(first[2], second[2]),
-  );
-}
 
 export class Graph {
   nodes: NTuple[];
@@ -35,7 +27,7 @@ export class Graph {
   }
 
   private isEdge(from: NTuple, to: NTuple, edge: Edge): boolean {
-    const [x, y, _] = edge;
+    const [x, y] = edge;
     const containsThisWay =
       NTuple.Eq.equals(x, from) && NTuple.Eq.equals(y, to);
     const containsThatWay =

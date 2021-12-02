@@ -56,7 +56,7 @@ true;  >=50; *
       }
       setIsLoading(false);
     }
-  }, [isLoading]);
+  }, [isLoading, input]);
 
   return (
     <>

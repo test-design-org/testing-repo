@@ -44,6 +44,7 @@ describe('parseVariable', () => {
   it('throws an error on undefined pattern', () => {
     const testCases = [
       'x(num,0.01,)',
+      'x(num,qwe)',
       'x(num,)',
       'x(int,)',
       'x(number)',

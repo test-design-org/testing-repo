@@ -17,7 +17,7 @@ const UsageGuide = ({ className }: { className: string }) => (
       </p>
       <p>
         You can leave lines empty, or create a whole commented line by starting
-        it with <code>&sol;&sol;</code>
+        it with <code>&#47;&#47;</code>
       </p>
       <p>
         One variable has this strucutre:
@@ -86,7 +86,7 @@ const UsageGuide = ({ className }: { className: string }) => (
         Another, complete example:
         <pre>
           <code>
-            &sol;&sol; Vacation example from
+            &#47;&#47; Vacation example from
             https://exercises.test-design.org/paid-vacation-days/
             <br />
             age(int); service(int)

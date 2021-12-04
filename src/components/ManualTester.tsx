@@ -28,7 +28,7 @@ const generateState = (input: string) => {
 const ManualTester = () => {
   const [input, setInput] = useState(
     `
-// This is an example. You should replace this with your own test description.
+// This is a comment. It is editable.
 
 VIP(bool); price(num); second_hand_price(num)
 true;   <50; *
@@ -73,9 +73,7 @@ true;  >=50; *
           <h2>Requirements</h2>
 
           <textarea rows={10}>
-            Paste your requirements into this textarea, so you don't have to
-            switch to other tabs in your browser to write yours test
-            descriptions up above.
+            You can paste the requirements here, so you don't have to switch to other tabs.
           </textarea>
 
           <div className="buttons">

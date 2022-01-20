@@ -22,7 +22,7 @@ export type Variable = BoolVariable | NumberVariable;
 export function parseVariable(varString: string): Variable {
   const boolRegex = /^(.*)\(bool\)$/;
   const intRegex = /^(.*)\(int\)$/;
-  const numberRegex = /^(.*)\(num(,([\d.]+))?\)$/;
+  const numberRegex = /^(.*)\(num(,(\d+\.\d+|\d+))?\)$/;
 
   const intRegexMatch = intRegex.exec(varString);
   if (intRegexMatch !== null) {
@@ -48,8 +48,8 @@ export function parseVariable(varString: string): Variable {
 export function parseTestCase(variable: Variable, rawTestCase: string): IInput {
   const missingVariableRegex = /\*/;
   const boolRegex = /^(true|false)$/;
-  const unaryOperatorRegex = /^(<|<=|>|>=|=|!=)(-?[\d.]+)$/;
-  const intervalRegex = /(\(|\[)(-?\d[\d.]*),(-?\d[\d.]*)(\)|\])/;
+  const unaryOperatorRegex = /^(<|<=|>|>=|=|!=)(-?\d+\.\d+|-?\d+)$/;
+  const intervalRegex = /(\(|\[)(-?\d+\.\d+|-?\d+),(-?\d+\.\d+|-?\d+)(\)|\])/;
 
   if (missingVariableRegex.test(rawTestCase)) {
     return new MissingVariableDTO();

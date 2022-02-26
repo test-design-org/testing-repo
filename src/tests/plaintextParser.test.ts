@@ -70,6 +70,7 @@ describe('parseTestCase', () => {
       const dto = result as BoolDTO;
       expect(dto.boolVal).toBe(true);
       expect(dto.expression).toBe(Expression.BoolTrue);
+      expect(dto.isConstant).toBe(false);
     });
 
     it('should parse false', () => {
@@ -79,6 +80,17 @@ describe('parseTestCase', () => {
       const dto = result as BoolDTO;
       expect(dto.boolVal).toBe(false);
       expect(dto.expression).toBe(Expression.BoolFalse);
+      expect(dto.isConstant).toBe(false);
+    });
+
+    it('should parse $false', () => {
+      const result = parseTestCase(new BoolVariable('x'), '$false');
+
+      expect(result).toBeInstanceOf(BoolDTO);
+      const dto = result as BoolDTO;
+      expect(dto.boolVal).toBe(false);
+      expect(dto.expression).toBe(Expression.BoolFalse);
+      expect(dto.isConstant).toBe(true);
     });
 
     it('should throw on variable mismatch', () => {
@@ -101,6 +113,7 @@ describe('parseTestCase', () => {
       expect(dto.interval.lo).toBe(-Infinity);
       expect(dto.interval.hi).toBe(30);
       expect(dto.isOpen).toEqual({ lo: true, hi: true });
+      expect(dto.isConstant).toBe(false);
     });
 
     it('should parse <=', () => {
@@ -112,6 +125,7 @@ describe('parseTestCase', () => {
       expect(dto.interval.lo).toBe(-Infinity);
       expect(dto.interval.hi).toBe(-30);
       expect(dto.isOpen).toEqual({ lo: true, hi: false });
+      expect(dto.isConstant).toBe(false);
     });
 
     it('should parse >', () => {
@@ -123,6 +137,7 @@ describe('parseTestCase', () => {
       expect(dto.interval.lo).toBe(30);
       expect(dto.interval.hi).toBe(Infinity);
       expect(dto.isOpen).toEqual({ lo: true, hi: true });
+      expect(dto.isConstant).toBe(false);
     });
 
     it('should parse >=', () => {
@@ -134,6 +149,7 @@ describe('parseTestCase', () => {
       expect(dto.interval.lo).toBe(30);
       expect(dto.interval.hi).toBe(Infinity);
       expect(dto.isOpen).toEqual({ lo: false, hi: true });
+      expect(dto.isConstant).toBe(false);
     });
 
     it('should parse =', () => {
@@ -145,6 +161,7 @@ describe('parseTestCase', () => {
       expect(dto.interval.lo).toBe(-30);
       expect(dto.interval.hi).toBe(-30);
       expect(dto.isOpen).toEqual({ lo: false, hi: false });
+      expect(dto.isConstant).toBe(false);
     });
 
     it('should parse !=', () => {
@@ -156,6 +173,19 @@ describe('parseTestCase', () => {
       expect(dto.interval.lo).toBe(30);
       expect(dto.interval.hi).toBe(30);
       expect(dto.isOpen).toEqual({ lo: false, hi: false });
+      expect(dto.isConstant).toBe(false);
+    });
+
+    it('should parse constants', () => {
+      const result = parseTestCase(new NumberVariable('x', 0.1), '$<30');
+
+      expect(result).toBeInstanceOf(IntervalDTO);
+      const dto = result as IntervalDTO;
+      expect(dto.expression).toBe(Expression.LessThan);
+      expect(dto.interval.lo).toBe(-Infinity);
+      expect(dto.interval.hi).toBe(30);
+      expect(dto.isOpen).toEqual({ lo: true, hi: true });
+      expect(dto.isConstant).toBe(true);
     });
   });
 
@@ -169,6 +199,7 @@ describe('parseTestCase', () => {
       expect(dto.interval.lo).toBe(-10);
       expect(dto.interval.hi).toBe(22.3);
       expect(dto.isOpen).toEqual({ lo: true, hi: false });
+      expect(dto.isConstant).toBe(false);
     });
 
     it('should parse [10.12,22)', () => {
@@ -180,6 +211,22 @@ describe('parseTestCase', () => {
       expect(dto.interval.lo).toBe(10.12);
       expect(dto.interval.hi).toBe(22);
       expect(dto.isOpen).toEqual({ lo: false, hi: true });
+      expect(dto.isConstant).toBe(false);
+    });
+
+    it('should parse $[10.12,22)', () => {
+      const result = parseTestCase(
+        new NumberVariable('x', 0.1),
+        '$[-10.12,0.1)',
+      );
+
+      expect(result).toBeInstanceOf(IntervalDTO);
+      const dto = result as IntervalDTO;
+      expect(dto.expression).toBe(Expression.Interval);
+      expect(dto.interval.lo).toBe(-10.12);
+      expect(dto.interval.hi).toBe(0.1);
+      expect(dto.isOpen).toEqual({ lo: false, hi: true });
+      expect(dto.isConstant).toBe(true);
     });
   });
 
@@ -223,6 +270,9 @@ describe('parseInput', () => {
 
       // A comment can be anywhere
       *; >30; <=60
+
+      // Check constant values
+      $false; $<20; $(-10.3,45]
       
       `;
 
@@ -236,6 +286,7 @@ describe('parseInput', () => {
     expect(firstCase[0]).toEqual({
       expression: Expression.BoolTrue,
       boolVal: true,
+      isConstant: false,
     });
 
     expect(firstCase[1]).toBeInstanceOf(IntervalDTO);
@@ -244,6 +295,7 @@ describe('parseInput', () => {
     expect(interval1.interval.lo).toBe(-Infinity);
     expect(interval1.interval.hi).toBe(50);
     expect(interval1.isOpen).toEqual({ lo: true, hi: true });
+    expect(interval1.isConstant).toBe(false);
 
     expect(firstCase[2]).toBeInstanceOf(MissingVariableDTO);
 
@@ -256,6 +308,7 @@ describe('parseInput', () => {
     expect(interval2.interval.lo).toBe(30);
     expect(interval2.interval.hi).toBe(Infinity);
     expect(interval2.isOpen).toEqual({ lo: true, hi: true });
+    expect(interval2.isConstant).toBe(false);
 
     expect(secondCase[2]).toBeInstanceOf(IntervalDTO);
     const interval3 = secondCase[2] as IntervalDTO;
@@ -263,6 +316,31 @@ describe('parseInput', () => {
     expect(interval3.interval.lo).toBe(-Infinity);
     expect(interval3.interval.hi).toBe(60);
     expect(interval3.isOpen).toEqual({ lo: true, hi: false });
+    expect(interval3.isConstant).toBe(false);
+
+    const thirdCase = result[1][2];
+    expect(thirdCase[0]).toBeInstanceOf(BoolDTO);
+    expect(thirdCase[0]).toEqual({
+      expression: Expression.BoolFalse,
+      boolVal: false,
+      isConstant: true,
+    });
+
+    expect(thirdCase[1]).toBeInstanceOf(IntervalDTO);
+    const interval4 = thirdCase[1] as IntervalDTO;
+    expect(interval4.expression).toBe(Expression.LessThan);
+    expect(interval4.interval.lo).toBe(-Infinity);
+    expect(interval4.interval.hi).toBe(20);
+    expect(interval4.isOpen).toEqual({ lo: true, hi: true });
+    expect(interval4.isConstant).toBe(true);
+
+    expect(thirdCase[2]).toBeInstanceOf(IntervalDTO);
+    const interval5 = thirdCase[2] as IntervalDTO;
+    expect(interval5.expression).toBe(Expression.Interval);
+    expect(interval5.interval.lo).toBe(-10.3);
+    expect(interval5.interval.hi).toBe(45);
+    expect(interval5.isOpen).toEqual({ lo: true, hi: false });
+    expect(interval5.isConstant).toBe(true);
   });
 });
 

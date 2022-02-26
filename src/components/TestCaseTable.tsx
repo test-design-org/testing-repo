@@ -11,7 +11,7 @@ const TestCaseTable = ({
   graph: Graph;
   variables: Variable[];
 }) => {
-  const [showIntervalValues, setShowIntervalValues] = useState(true);
+  const [showIntervalValues, setShowIntervalValues] = useState(false);
 
   return (
     <div className="testCaseTable">
@@ -27,6 +27,12 @@ const TestCaseTable = ({
         />
         Show interval values
       </label>
+
+      <br />
+
+      <span>
+        <code>*</code> can be any value you like
+      </span>
 
       <table className="testValueTable">
         <thead>

@@ -70,10 +70,12 @@ true;  >=50; *
             rows={20}
           ></textarea>
 
-          <h2>Requirements</h2>
+          <h2>Notebook</h2>
 
           <textarea rows={10}>
-            You can paste the requirements here, so you don't have to switch to other tabs.
+            You can use this textarea for notes. It won't have an effect on the
+            generated test cases. You can also paste the requirements here, so
+            you don't have to switch to other tabs.
           </textarea>
 
           <div className="buttons">

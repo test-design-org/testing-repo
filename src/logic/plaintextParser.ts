@@ -47,10 +47,10 @@ export function parseVariable(varString: string): Variable {
 
 export function parseTestCase(variable: Variable, rawTestCase: string): IInput {
   const missingVariableRegex = /\*/;
-  const boolRegex = /^(\$?)(true|false)$/;
-  const unaryOperatorRegex = /^(\$?)(<|<=|>|>=|=|!=)(-?\d+\.\d+|-?\d+)$/;
+  const boolRegex = /^(\$?)\s*(true|false)$/;
+  const unaryOperatorRegex = /^(\$?)\s*(<|<=|>|>=|=|!=)\s*(-?\d+\.\d+|-?\d+)$/;
   const intervalRegex =
-    /(\$?)(\(|\[)(-?\d+\.\d+|-?\d+),(-?\d+\.\d+|-?\d+)(\)|\])/;
+    /(\$?)\s*(\(|\[)\s*(-?\d+\.\d+|-?\d+)\s*,\s*(-?\d+\.\d+|-?\d+)\s*(\)|\])/;
 
   if (missingVariableRegex.test(rawTestCase)) {
     return new MissingVariableDTO();

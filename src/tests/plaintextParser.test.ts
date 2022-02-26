@@ -187,6 +187,21 @@ describe('parseTestCase', () => {
       expect(dto.isOpen).toEqual({ lo: true, hi: true });
       expect(dto.isConstant).toBe(true);
     });
+
+    it('should parse with whitespace', () => {
+      const result = parseTestCase(
+        new NumberVariable('x', 0.1),
+        '$   \t  !=  \t   30',
+      );
+
+      expect(result).toBeInstanceOf(IntervalDTO);
+      const dto = result as IntervalDTO;
+      expect(dto.expression).toBe(Expression.NotEqualTo);
+      expect(dto.interval.lo).toBe(30);
+      expect(dto.interval.hi).toBe(30);
+      expect(dto.isOpen).toEqual({ lo: false, hi: false });
+      expect(dto.isConstant).toBe(true);
+    });
   });
 
   describe('interval case', () => {
@@ -218,6 +233,21 @@ describe('parseTestCase', () => {
       const result = parseTestCase(
         new NumberVariable('x', 0.1),
         '$[-10.12,0.1)',
+      );
+
+      expect(result).toBeInstanceOf(IntervalDTO);
+      const dto = result as IntervalDTO;
+      expect(dto.expression).toBe(Expression.Interval);
+      expect(dto.interval.lo).toBe(-10.12);
+      expect(dto.interval.hi).toBe(0.1);
+      expect(dto.isOpen).toEqual({ lo: false, hi: true });
+      expect(dto.isConstant).toBe(true);
+    });
+
+    it('should parse whitespaces', () => {
+      const result = parseTestCase(
+        new NumberVariable('x', 0.1),
+        '$    [  -10.12   ,   0.1   )',
       );
 
       expect(result).toBeInstanceOf(IntervalDTO);
@@ -272,7 +302,7 @@ describe('parseInput', () => {
       *; >30; <=60
 
       // Check constant values
-      $false; $<20; $(-10.3,45]
+        $  false  ;   $  < 20;   $  (  -10.3 ,  45 ] 
       
       `;
 

@@ -47,9 +47,10 @@ export function parseVariable(varString: string): Variable {
 
 export function parseTestCase(variable: Variable, rawTestCase: string): IInput {
   const missingVariableRegex = /\*/;
-  const boolRegex = /^(true|false)$/;
-  const unaryOperatorRegex = /^(<|<=|>|>=|=|!=)(-?\d+\.\d+|-?\d+)$/;
-  const intervalRegex = /(\(|\[)(-?\d+\.\d+|-?\d+),(-?\d+\.\d+|-?\d+)(\)|\])/;
+  const boolRegex = /^(\$?)(true|false)$/;
+  const unaryOperatorRegex = /^(\$?)(<|<=|>|>=|=|!=)(-?\d+\.\d+|-?\d+)$/;
+  const intervalRegex =
+    /(\$?)(\(|\[)(-?\d+\.\d+|-?\d+),(-?\d+\.\d+|-?\d+)(\)|\])/;
 
   if (missingVariableRegex.test(rawTestCase)) {
     return new MissingVariableDTO();
@@ -60,10 +61,11 @@ export function parseTestCase(variable: Variable, rawTestCase: string): IInput {
     if (!(variable instanceof BoolVariable))
       throw new Error('Can only create a BoolDTO if the variable is a Boolean');
 
-    if (boolRegexMatch[1] === 'true')
-      return new BoolDTO(Expression.BoolTrue, true);
+    const isConstant = boolRegexMatch[1] === '$';
+    if (boolRegexMatch[2] === 'true')
+      return new BoolDTO(Expression.BoolTrue, true, isConstant);
 
-    return new BoolDTO(Expression.BoolFalse, false);
+    return new BoolDTO(Expression.BoolFalse, false, isConstant);
   }
 
   const unaryOperatorRegexMatch = unaryOperatorRegex.exec(rawTestCase);
@@ -73,9 +75,15 @@ export function parseTestCase(variable: Variable, rawTestCase: string): IInput {
         'Can only create an IntervalDTO if the variable is a Number',
       );
 
-    const expression = expressionFromString(unaryOperatorRegexMatch[1]);
-    const number = parseFloat(unaryOperatorRegexMatch[2]);
-    return createUnaryIntervalDTO(expression, number, variable.precision);
+    const isConstant = unaryOperatorRegexMatch[1] === '$';
+    const expression = expressionFromString(unaryOperatorRegexMatch[2]);
+    const number = parseFloat(unaryOperatorRegexMatch[3]);
+    return createUnaryIntervalDTO(
+      expression,
+      number,
+      variable.precision,
+      isConstant,
+    );
   }
 
   const intervalRegexMatch = intervalRegex.exec(rawTestCase);
@@ -85,18 +93,20 @@ export function parseTestCase(variable: Variable, rawTestCase: string): IInput {
         'Can only create an IntervalDTO if the variable is a Number',
       );
 
+    const isConstant = intervalRegexMatch[1] === '$';
     const isOpen = {
-      lo: intervalRegexMatch[1] === '(',
-      hi: intervalRegexMatch[4] === ')',
+      lo: intervalRegexMatch[2] === '(',
+      hi: intervalRegexMatch[5] === ')',
     };
-    const lo = parseFloat(intervalRegexMatch[2]);
-    const hi = parseFloat(intervalRegexMatch[3]);
+    const lo = parseFloat(intervalRegexMatch[3]);
+    const hi = parseFloat(intervalRegexMatch[4]);
 
     return new IntervalDTO(
       Expression.Interval,
       new Interval(lo, hi),
       variable.precision,
       isOpen,
+      isConstant,
     );
   }
 

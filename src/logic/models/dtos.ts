@@ -16,6 +16,8 @@ export enum Expression {
 
 export interface IInput {
   expression: Expression;
+  isConstant: boolean;
+
   intersectsWith(other: IInput): boolean;
   intersect(other: IInput): IInput;
   toString(): string;
@@ -24,10 +26,16 @@ export interface IInput {
 export class BoolDTO implements IInput {
   expression: Expression;
   boolVal: boolean;
+  isConstant: boolean;
 
-  constructor(expression: Expression, boolVal: boolean) {
+  constructor(
+    expression: Expression,
+    boolVal: boolean,
+    isConstant: boolean = false,
+  ) {
     this.expression = expression;
     this.boolVal = boolVal;
+    this.isConstant = isConstant;
   }
 
   intersectsWith(other: IInput): boolean {
@@ -63,6 +71,7 @@ export class BoolDTO implements IInput {
 
 export class MissingVariableDTO implements IInput {
   expression = Expression.MissingVariable;
+  isConstant = false;
 
   intersectsWith(other: IInput): boolean {
     return true;
@@ -85,6 +94,7 @@ export interface IsOpen {
 
 export class IntervalDTO implements IInput {
   expression: Expression;
+  isConstant: boolean;
   interval: Interval;
   isOpen: IsOpen;
   precision: number;
@@ -94,11 +104,13 @@ export class IntervalDTO implements IInput {
     interval: Interval,
     precision: number,
     isOpen: IsOpen = { hi: false, lo: false },
+    isConstant: boolean = false,
   ) {
     this.expression = expression;
     this.interval = interval;
     this.precision = precision;
     this.isOpen = isOpen;
+    this.isConstant = isConstant;
   }
 
   intersectsWith(other: IInput): boolean {

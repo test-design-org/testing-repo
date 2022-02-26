@@ -22,6 +22,8 @@ export function generateTestCases(inputs: IInput[]): NTuple[] {
 const calculateInOnPatterns1 = (inputs: IInput[]): IInput[] =>
   // eslint-disable-next-line array-callback-return
   inputs.map((input) => {
+    if (input.isConstant) return input;
+
     switch (input.expression) {
       case Expression.LessThan:
       case Expression.LessThanOrEqualTo:
@@ -50,6 +52,8 @@ const calculateInOnPatterns1 = (inputs: IInput[]): IInput[] =>
 const calculateInOnPatterns2 = (inputs: IInput[]): IInput[] =>
   // eslint-disable-next-line array-callback-return
   inputs.map((input) => {
+    if (input.isConstant) return input;
+
     switch (input.expression) {
       case Expression.LessThan:
       case Expression.LessThanOrEqualTo:
@@ -78,6 +82,8 @@ const calculateInOnPatterns2 = (inputs: IInput[]): IInput[] =>
 const baseline = (inputs: IInput[]): IInput[] =>
   // eslint-disable-next-line array-callback-return
   inputs.map((input) => {
+    if (input.isConstant) return input;
+
     switch (input.expression) {
       case Expression.LessThan:
       case Expression.LessThanOrEqualTo:
@@ -106,6 +112,7 @@ function OffOut(inputs: IInput[]): IInput[][] {
 
   for (let i = 0; i < inputs.length; ++i) {
     if (inputs[i] instanceof MissingVariableDTO) continue;
+    if (inputs[i].isConstant) continue;
 
     var based1 = baseline(inputs);
     var based2 = baseline(inputs);

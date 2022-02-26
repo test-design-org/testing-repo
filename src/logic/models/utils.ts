@@ -24,6 +24,7 @@ export function createUnaryIntervalDTO(
   expression: Expression,
   num: number,
   precision: number,
+  isConstant: boolean,
 ): IntervalDTO {
   switch (expression) {
     case Expression.LessThan:
@@ -32,6 +33,7 @@ export function createUnaryIntervalDTO(
         new Interval(-Infinity, num),
         precision,
         { lo: true, hi: true },
+        isConstant,
       );
 
     case Expression.LessThanOrEqualTo:
@@ -40,6 +42,7 @@ export function createUnaryIntervalDTO(
         new Interval(-Infinity, num),
         precision,
         { lo: true, hi: false },
+        isConstant,
       );
 
     case Expression.GreaterThan:
@@ -48,6 +51,7 @@ export function createUnaryIntervalDTO(
         new Interval(num, Infinity),
         precision,
         { lo: true, hi: true },
+        isConstant,
       );
 
     case Expression.GreaterThanOrEqualTo:
@@ -56,19 +60,32 @@ export function createUnaryIntervalDTO(
         new Interval(num, Infinity),
         precision,
         { lo: false, hi: true },
+        isConstant,
       );
 
     case Expression.EqualTo:
-      return new IntervalDTO(expression, new Interval(num, num), precision, {
-        lo: false,
-        hi: false,
-      });
+      return new IntervalDTO(
+        expression,
+        new Interval(num, num),
+        precision,
+        {
+          lo: false,
+          hi: false,
+        },
+        isConstant,
+      );
 
     case Expression.NotEqualTo:
-      return new IntervalDTO(expression, new Interval(num, num), precision, {
-        lo: false,
-        hi: false,
-      });
+      return new IntervalDTO(
+        expression,
+        new Interval(num, num),
+        precision,
+        {
+          lo: false,
+          hi: false,
+        },
+        isConstant,
+      );
 
     default:
       throw new Error(

@@ -8,34 +8,34 @@ import {
   BoolVariable,
   NumberVariable,
   parseInput,
-  parseTestCase,
-  parseVariable,
+  parseTestCases,
+  parseVariables,
 } from '../logic/plaintextParser';
 
 describe('parseVariable', () => {
   it('parses a boolVariable', () => {
-    const result = parseVariable('varName(bool)');
+    const result = parseVariables('varName(bool)')[0];
 
     expect(result).toBeInstanceOf(BoolVariable);
     expect(result.name).toBe('varName');
   });
 
   it('parses a numberVariable with int precision', () => {
-    const result = parseVariable('x(int)');
+    const result = parseVariables('x(int)')[0];
 
     expect(result).toBeInstanceOf(NumberVariable);
     expect(result).toEqual({ name: 'x', precision: 1 });
   });
 
   it('parses a numberVariable with default precision', () => {
-    const result = parseVariable('x(num)');
+    const result = parseVariables('x(num)')[0];
 
     expect(result).toBeInstanceOf(NumberVariable);
     expect(result).toEqual({ name: 'x', precision: 0.01 });
   });
 
   it('parses a numberVariable with float precision', () => {
-    const result = parseVariable('x(num,0.23)');
+    const result = parseVariables('x(num,0.23)')[0];
 
     expect(result).toBeInstanceOf(NumberVariable);
     expect(result).toEqual({ name: 'x', precision: 0.23 });
@@ -56,7 +56,7 @@ describe('parseVariable', () => {
     ];
 
     for (const testCase of testCases) {
-      expect(() => parseVariable(testCase)).toThrow(Error);
+      expect(() => parseVariables(testCase)).toThrow(Error);
     }
   });
 });
@@ -64,7 +64,7 @@ describe('parseVariable', () => {
 describe('parseTestCase', () => {
   describe('bool test case', () => {
     it('should parse true', () => {
-      const result = parseTestCase(new BoolVariable('x'), 'true');
+      const result = parseTestCases([new BoolVariable('x')], 'true')[0];
 
       expect(result).toBeInstanceOf(BoolDTO);
       const dto = result as BoolDTO;
@@ -74,7 +74,7 @@ describe('parseTestCase', () => {
     });
 
     it('should parse false', () => {
-      const result = parseTestCase(new BoolVariable('x'), 'false');
+      const result = parseTestCases([new BoolVariable('x')], 'false')[0];
 
       expect(result).toBeInstanceOf(BoolDTO);
       const dto = result as BoolDTO;
@@ -84,7 +84,7 @@ describe('parseTestCase', () => {
     });
 
     it('should parse $false', () => {
-      const result = parseTestCase(new BoolVariable('x'), '$false');
+      const result = parseTestCases([new BoolVariable('x')], '$false')[0];
 
       expect(result).toBeInstanceOf(BoolDTO);
       const dto = result as BoolDTO;
@@ -95,17 +95,17 @@ describe('parseTestCase', () => {
 
     it('should throw on variable mismatch', () => {
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), 'false'),
+        parseTestCases([new NumberVariable('x', 1)], 'false'),
       ).toThrowError();
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), 'true'),
+        parseTestCases([new NumberVariable('x', 1)], 'true'),
       ).toThrowError();
     });
   });
 
   describe('unary operator case', () => {
     it('should parse <', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '<30');
+      const result = parseTestCases([new NumberVariable('x', 0.1)], '<30')[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -117,7 +117,7 @@ describe('parseTestCase', () => {
     });
 
     it('should parse <=', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '<=-30');
+      const result = parseTestCases([new NumberVariable('x', 0.1)], '<=-30')[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -129,7 +129,7 @@ describe('parseTestCase', () => {
     });
 
     it('should parse >', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '>30');
+      const result = parseTestCases([new NumberVariable('x', 0.1)], '>30')[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -141,7 +141,7 @@ describe('parseTestCase', () => {
     });
 
     it('should parse >=', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '>=30');
+      const result = parseTestCases([new NumberVariable('x', 0.1)], '>=30')[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -153,7 +153,7 @@ describe('parseTestCase', () => {
     });
 
     it('should parse =', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '=-30');
+      const result = parseTestCases([new NumberVariable('x', 0.1)], '=-30')[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -165,7 +165,7 @@ describe('parseTestCase', () => {
     });
 
     it('should parse !=', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '!=30');
+      const result = parseTestCases([new NumberVariable('x', 0.1)], '!=30')[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -177,7 +177,7 @@ describe('parseTestCase', () => {
     });
 
     it('should parse constants', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '$<30');
+      const result = parseTestCases([new NumberVariable('x', 0.1)], '$<30')[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -189,10 +189,10 @@ describe('parseTestCase', () => {
     });
 
     it('should parse with whitespace', () => {
-      const result = parseTestCase(
-        new NumberVariable('x', 0.1),
+      const result = parseTestCases(
+        [new NumberVariable('x', 0.1)],
         '$   \t  !=  \t   30',
-      );
+      )[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -206,7 +206,10 @@ describe('parseTestCase', () => {
 
   describe('interval case', () => {
     it('should parse (-10,22.3]', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '(-10,22.3]');
+      const result = parseTestCases(
+        [new NumberVariable('x', 0.1)],
+        '(-10,22.3]',
+      )[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -218,7 +221,10 @@ describe('parseTestCase', () => {
     });
 
     it('should parse [10.12,22)', () => {
-      const result = parseTestCase(new NumberVariable('x', 0.1), '[10.12,22)');
+      const result = parseTestCases(
+        [new NumberVariable('x', 0.1)],
+        '[10.12,22)',
+      )[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -230,10 +236,10 @@ describe('parseTestCase', () => {
     });
 
     it('should parse $[10.12,22)', () => {
-      const result = parseTestCase(
-        new NumberVariable('x', 0.1),
+      const result = parseTestCases(
+        [new NumberVariable('x', 0.1)],
         '$[-10.12,0.1)',
-      );
+      )[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -245,10 +251,10 @@ describe('parseTestCase', () => {
     });
 
     it('should parse whitespaces', () => {
-      const result = parseTestCase(
-        new NumberVariable('x', 0.1),
+      const result = parseTestCases(
+        [new NumberVariable('x', 0.1)],
         '$    [  -10.12   ,   0.1   )',
-      );
+      )[0];
 
       expect(result).toBeInstanceOf(IntervalDTO);
       const dto = result as IntervalDTO;
@@ -263,28 +269,28 @@ describe('parseTestCase', () => {
   describe('wrong input', () => {
     it('should throw error on wrong input', () => {
       expect(() =>
-        parseTestCase(new BoolVariable('x'), 'adsqwe'),
+        parseTestCases([new BoolVariable('x')], 'adsqwe'),
       ).toThrowError();
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), '>='),
+        parseTestCases([new NumberVariable('x', 1)], '>='),
       ).toThrowError();
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), '>=asd'),
+        parseTestCases([new NumberVariable('x', 1)], '>=asd'),
       ).toThrowError();
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), '>=56asd'),
+        parseTestCases([new NumberVariable('x', 1)], '>=56asd'),
       ).toThrowError();
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), '>=56asd'),
+        parseTestCases([new NumberVariable('x', 1)], '>=56asd'),
       ).toThrowError();
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), '56>=56'),
+        parseTestCases([new NumberVariable('x', 1)], '56>=56'),
       ).toThrowError();
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), '56='),
+        parseTestCases([new NumberVariable('x', 1)], '56='),
       ).toThrowError();
       expect(() =>
-        parseTestCase(new NumberVariable('x', 1), '56'),
+        parseTestCases([new NumberVariable('x', 1)], '56'),
       ).toThrowError();
     });
   });

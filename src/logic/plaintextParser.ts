@@ -8,6 +8,7 @@ import {
   MissingVariableDTO,
 } from './models/dtos';
 import { createUnaryIntervalDTO, expressionFromString } from './models/utils';
+import ohm from 'ohm-js';
 
 export class BoolVariable {
   constructor(public name: string) {}
@@ -19,111 +20,150 @@ export class NumberVariable {
 
 export type Variable = BoolVariable | NumberVariable;
 
-export function parseVariable(varString: string): Variable {
-  const boolRegex = /^(.*)\(bool\)$/;
-  const intRegex = /^(.*)\(int\)$/;
-  const numberRegex = /^(.*)\(num(,(\d+\.\d+|\d+))?\)$/;
+const gptGrammar = ohm.grammar(String.raw`
+Gpt {
+  Everything = VarDecls TestCases
 
-  const intRegexMatch = intRegex.exec(varString);
-  if (intRegexMatch !== null) {
-    return new NumberVariable(intRegexMatch[1], 1);
-  }
+  TestCases = NonemptyListOf<TestCase, ";">
+  TestCase = "*" -- any
+       | constantToken? bool -- bool
+       | constantToken? unaryOp number -- unary
+       | constantToken? ("(" | "[") number "," number (")" | "]") -- interval
 
-  const boolRegexMatch = boolRegex.exec(varString);
-  if (boolRegexMatch !== null) {
-    return new BoolVariable(boolRegexMatch[1]);
-  }
+  constantToken = "$"
+  bool = "true" | "false"
+  unaryOp = "<=" |  ">=" |  "!=" | "<" | ">" | "="
 
-  const numberRegexMatch = numberRegex.exec(varString);
-  if (numberRegexMatch !== null) {
-    return new NumberVariable(
-      numberRegexMatch[1],
-      parseFloat(numberRegexMatch[3] ?? 0.01),
-    );
-  }
+  VarDecls = NonemptyListOf<VarDecl, ";">
+  VarDecl = varName "(" "bool" ")" -- bool
+          | varName "(" "int" ")" -- int
+          | varName "(" "num" ")" -- num
+          | varName "(" "num" "," posNumber ")" -- numWithPrec
+  varName = (letter | "_") (alnum | "_")*
 
-  throw new Error(`Can't parse variable from '${varString}'`);
+  posNumber = digit+ ("." digit+)?
+  number = posNumber -- pos
+         | "-" posNumber -- neg
 }
+`);
 
-export function parseTestCase(variable: Variable, rawTestCase: string): IInput {
-  const missingVariableRegex = /\*/;
-  const boolRegex = /^(\$?)\s*(true|false)$/;
-  const unaryOperatorRegex = /^(\$?)\s*(<|<=|>|>=|=|!=)\s*(-?\d+\.\d+|-?\d+)$/;
-  const intervalRegex =
-    /(\$?)\s*(\(|\[)\s*(-?\d+\.\d+|-?\d+)\s*,\s*(-?\d+\.\d+|-?\d+)\s*(\)|\])/;
-
-  if (missingVariableRegex.test(rawTestCase)) {
+const gptSemantics = gptGrammar.createSemantics().addOperation('eval', {
+  Everything(vars, tests) {
+    return [vars.eval(), tests.eval()] as const;
+  },
+  TestCases(tests) {
+    return tests.asIteration().children.map((x) => x.eval());
+  },
+  TestCase_any(_star) {
     return new MissingVariableDTO();
-  }
-
-  const boolRegexMatch = boolRegex.exec(rawTestCase);
-  if (boolRegexMatch !== null) {
-    if (!(variable instanceof BoolVariable))
-      throw new Error('Can only create a BoolDTO if the variable is a Boolean');
-
-    const isConstant = boolRegexMatch[1] === '$';
-    if (boolRegexMatch[2] === 'true')
-      return new BoolDTO(Expression.BoolTrue, true, isConstant);
-
-    return new BoolDTO(Expression.BoolFalse, false, isConstant);
-  }
-
-  const unaryOperatorRegexMatch = unaryOperatorRegex.exec(rawTestCase);
-  if (unaryOperatorRegexMatch !== null) {
-    if (!(variable instanceof NumberVariable))
-      throw new Error(
-        'Can only create an IntervalDTO if the variable is a Number',
-      );
-
-    const isConstant = unaryOperatorRegexMatch[1] === '$';
-    const expression = expressionFromString(unaryOperatorRegexMatch[2]);
-    const number = parseFloat(unaryOperatorRegexMatch[3]);
-    return createUnaryIntervalDTO(
-      expression,
-      number,
-      variable.precision,
+  },
+  TestCase_bool(constantToken, bool) {
+    const val = bool.eval();
+    const isConstant = constantToken.numChildren > 0;
+    return new BoolDTO(
+      val ? Expression.BoolTrue : Expression.BoolFalse,
+      bool.eval(),
       isConstant,
     );
-  }
-
-  const intervalRegexMatch = intervalRegex.exec(rawTestCase);
-  if (intervalRegexMatch !== null) {
-    if (!(variable instanceof NumberVariable))
-      throw new Error(
-        'Can only create an IntervalDTO if the variable is a Number',
-      );
-
-    const isConstant = intervalRegexMatch[1] === '$';
+  },
+  TestCase_unary(constantToken, unaryOp, number) {
+    const isConstant = constantToken.numChildren > 0;
+    return createUnaryIntervalDTO(
+      expressionFromString(unaryOp.sourceString),
+      number.eval(),
+      2352345623.0, // This will be overridden
+      isConstant,
+    );
+  },
+  TestCase_interval(constantToken, lb, lo, comma, hi, rb) {
+    const isConstant = constantToken.numChildren > 0;
     const isOpen = {
-      lo: intervalRegexMatch[2] === '(',
-      hi: intervalRegexMatch[5] === ')',
+      lo: lb.sourceString === '(',
+      hi: rb.sourceString === ')',
     };
-    const lo = parseFloat(intervalRegexMatch[3]);
-    const hi = parseFloat(intervalRegexMatch[4]);
-
     return new IntervalDTO(
       Expression.Interval,
-      new Interval(lo, hi),
-      variable.precision,
+      new Interval(lo.eval(), hi.eval()),
+      45646545.0, // This will be overridden
       isOpen,
       isConstant,
     );
-  }
+  },
+  bool(bool) {
+    return bool.sourceString === 'true' ? true : false;
+  },
+  VarDecls(vars) {
+    return vars.asIteration().children.map((x) => x.eval());
+  },
+  VarDecl_bool(varName, lb, bool, rb) {
+    return new BoolVariable(varName.eval());
+  },
+  VarDecl_int(varName, lb, bool, rb) {
+    return new NumberVariable(varName.eval(), 1.0);
+  },
+  VarDecl_num(varName, lb, bool, rb) {
+    return new NumberVariable(varName.eval(), 0.01);
+  },
+  VarDecl_numWithPrec(varName, lb, litnum, comma, precision, rb) {
+    return new NumberVariable(varName.eval(), precision.eval());
+  },
+  varName(letter, alnum) {
+    return this.sourceString;
+  },
+  posNumber(_digits, _decimal, _digits2) {
+    return parseFloat(this.sourceString);
+  },
+  number_pos(number) {
+    return number.eval();
+  },
+  number_neg(_minus, number) {
+    return parseFloat(`-${number.eval()}`);
+  },
+} as any);
 
-  throw Error(`Cannot parse test case from '${rawTestCase}'`);
+export function parseVariables(varString: string): Variable[] {
+  const m = gptGrammar.match(varString, 'VarDecls');
+  if (m.succeeded()) {
+    const parse = gptSemantics(m).eval();
+    console.log(parse);
+    return parse;
+  } else {
+    throw new Error(m.message);
+  }
 }
 
 export function parseTestCases(variables: Variable[], line: string): IInput[] {
-  const rawTestCasesWithVariables = zip(
-    variables,
-    line.split(';').map((x) => x.trim()),
-  );
+  const m = gptGrammar.match(line, 'TestCases');
+  if (m.succeeded()) {
+    const parsedInputs = gptSemantics(m).eval();
 
-  const inputs = rawTestCasesWithVariables.map(([variable, rawTestCase]) =>
-    parseTestCase(variable, rawTestCase),
-  );
+    const validatedVariableInputs = zip(variables)(parsedInputs).map(
+      ([input, variable]) => {
+        if (
+          !(input instanceof MissingVariableDTO) &&
+          !(
+            (variable instanceof NumberVariable &&
+              input instanceof IntervalDTO) ||
+            (variable instanceof BoolVariable && input instanceof BoolDTO)
+          )
+        ) {
+          throw new Error(
+            'Type error: Test case and variable type has incompatible types',
+          );
+        }
 
-  return inputs;
+        if (variable instanceof NumberVariable) {
+          return input.withPrecision(variable.precision);
+        }
+
+        return input;
+      },
+    );
+
+    return validatedVariableInputs;
+  } else {
+    throw new Error(m.message);
+  }
 }
 
 export function parseInput(input: string): [Variable[], IInput[][]] {
@@ -133,13 +173,9 @@ export function parseInput(input: string): [Variable[], IInput[][]] {
     .map((line) => line.trim())
     .filter((line) => !line.startsWith('//') && line !== '');
 
-  const variables = lines[0]
-    .split(';')
-    .map((x) => x.trim())
-    .map(parseVariable);
+  const variables = parseVariables(lines[0]);
 
   const testCases = lines.slice(1);
-
   const inputs = testCases.map((x) => parseTestCases(variables, x));
 
   return [variables, inputs];

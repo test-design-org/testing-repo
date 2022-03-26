@@ -26,3 +26,7 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+## Development
+### Parsing
+We use [ohm-js](https://ohmjs.org/docs/intro) for parsing. Check out the documentation and the online debugger they have. 

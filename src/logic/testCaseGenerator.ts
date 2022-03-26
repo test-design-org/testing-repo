@@ -108,7 +108,7 @@ const baseline = (inputs: IInput[]): IInput[] =>
   });
 
 function OffOut(inputs: IInput[]): IInput[][] {
-  const output = [];
+  const output: IInput[][] = [];
 
   for (let i = 0; i < inputs.length; ++i) {
     if (inputs[i] instanceof MissingVariableDTO) continue;

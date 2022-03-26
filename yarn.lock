@@ -8404,6 +8404,11 @@ obuf@^1.0.0, obuf@^1.1.2:
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
 
+ohm-js@^16.3.1:
+  version "16.3.1"
+  resolved "https://registry.yarnpkg.com/ohm-js/-/ohm-js-16.3.1.tgz#44e2d29f1e10648e0f5b7d8c0efd8c67596fb67b"
+  integrity sha512-XqMyhO0XimEWY6iIyIRGw/hGnAE+DZAV7nkM/xI7tKotuc8sbBWkKBnyiG+rRE4mKIvPO+0umkMpP5fgq+RuIQ==
+
 on-finished@~2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.3.0.tgz#20f1336481b083cd75337992a16971aa2d906947"
@@ -9528,6 +9533,11 @@ pretty-format@^27.0.0, pretty-format@^27.3.1:
     ansi-regex "^5.0.1"
     ansi-styles "^5.0.0"
     react-is "^17.0.1"
+
+prettybnf@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/prettybnf/-/prettybnf-0.1.3.tgz#f6e039a36f856020bcd5920d1e48cdeebb2faa03"
+  integrity sha1-9uA5o2+FYCC81ZINHkjN7rsvqgM=
 
 process-nextick-args@~2.0.0:
   version "2.0.1"

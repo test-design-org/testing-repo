@@ -20,6 +20,7 @@ export interface IInput {
 
   intersectsWith(other: IInput): boolean;
   intersect(other: IInput): IInput;
+  withPrecision(newPrecision: number): IInput;
   toString(): string;
 }
 
@@ -56,6 +57,10 @@ export class BoolDTO implements IInput {
     return new BoolDTO(this.expression, this.boolVal);
   }
 
+  withPrecision(_newPrecision: number): BoolDTO {
+    return this;
+  }
+
   toString(): string {
     return `${this.boolVal}`;
   }
@@ -79,6 +84,11 @@ export class MissingVariableDTO implements IInput {
   intersect(other: IInput): IInput {
     return other;
   }
+
+  withPrecision(_newPrecision: number): MissingVariableDTO {
+    return this;
+  }
+
   toString(): string {
     return `*`;
   }
@@ -133,6 +143,16 @@ export class IntervalDTO implements IInput {
       this.expression,
       IOps.intersection(this.interval, that.interval),
       this.precision,
+    );
+  }
+
+  withPrecision(newPrecision: number): IntervalDTO {
+    return new IntervalDTO(
+      this.expression,
+      this.interval,
+      newPrecision,
+      this.isOpen,
+      this.isConstant,
     );
   }
 

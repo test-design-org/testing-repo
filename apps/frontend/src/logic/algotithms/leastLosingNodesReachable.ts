@@ -1,11 +1,6 @@
-import {  Graph } from '../graph';
-import {
-  dfs,
-  joinNodesOnEdge,
-  minimumBy,
-} from './common';
+import { Graph, NTuple } from '@testing-repo/gpt-common';
+import { dfs, joinNodesOnEdge, minimumBy } from './common';
 import { createGraphUrl } from '../graphGenerator';
-import { NTuple } from '../models/ntuple';
 
 function nodesReachable(graph: Graph, startNode: NTuple): number {
   let nodeCount = 0;
@@ -40,7 +35,7 @@ export function runLeastLosingNodesReachable(_graph: Graph): Graph {
   while (graph.edges.length > 0) {
     evaluateEdgesreachableCount(graph);
 
-    var edgeToJoin = minimumBy(graph.edges, (x) => x[2]);
+    const edgeToJoin = minimumBy(graph.edges, (x) => x[2]);
 
     joinNodesOnEdge(graph, edgeToJoin);
   }

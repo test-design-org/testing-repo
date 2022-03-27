@@ -1,4 +1,4 @@
-import { NTuple } from './models/ntuple';
+import { NTuple } from './ntuple';
 
 export type Edge = [NTuple, NTuple, number];
 

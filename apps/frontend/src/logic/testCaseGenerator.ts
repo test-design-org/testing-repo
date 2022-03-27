@@ -6,8 +6,8 @@ import {
   IInput,
   IntervalDTO,
   MissingVariableDTO,
-} from './models/dtos';
-import { NTuple } from './models/ntuple';
+  NTuple,
+} from '@testing-repo/gpt-common';
 
 export function generateTestCases(inputs: IInput[]): NTuple[] {
   const nTuples = [
@@ -114,8 +114,10 @@ function OffOut(inputs: IInput[]): IInput[][] {
     if (inputs[i] instanceof MissingVariableDTO) continue;
     if (inputs[i].isConstant) continue;
 
-    var based1 = baseline(inputs);
-    var based2 = baseline(inputs);
+    const based1 = baseline(inputs);
+    const based2 = baseline(inputs);
+    const based3 = baseline(inputs);
+    const based4 = baseline(inputs);
 
     switch (inputs[i].expression) {
       case Expression.LessThan:
@@ -161,9 +163,6 @@ function OffOut(inputs: IInput[]): IInput[][] {
         break;
 
       case Expression.Interval:
-        var based3 = baseline(inputs);
-        var based4 = baseline(inputs);
-
         based1[i] = Out(inputs[i], 1);
         based2[i] = Out(inputs[i], 2);
         based3[i] = Off(inputs[i], 1);
@@ -277,7 +276,7 @@ function InIn(input: IInput, version: 1 | 2): IInput {
   }
 }
 
-function Off(input: IInput, version: number = 0): IInput {
+function Off(input: IInput, version = 0): IInput {
   if (!(input instanceof IntervalDTO))
     throw new Error("Off's argument must be an IntervalDTO");
 

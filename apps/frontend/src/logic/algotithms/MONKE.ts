@@ -1,4 +1,4 @@
-import { Graph } from '../graph';
+import { Graph } from '@testing-repo/gpt-common';
 import { joinNodesOnEdge } from './common';
 
 export function runMONKE(_graph: Graph): Graph {

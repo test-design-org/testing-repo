@@ -3,7 +3,7 @@ import {
   Expression,
   IntervalDTO,
   MissingVariableDTO,
-} from '../src/logic/models/dtos';
+} from '@testing-repo/gpt-common';
 import {
   BoolVariable,
   NumberVariable,

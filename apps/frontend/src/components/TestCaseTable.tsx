@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Graph } from '../logic/graph';
+import { Graph } from '@testing-repo/gpt-common';
 import { Variable } from '../logic/plaintextParser';
 import { generateTestValue } from '../logic/testValueGenerator';
 import './TestCaseTable.scss';

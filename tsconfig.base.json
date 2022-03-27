@@ -14,8 +14,10 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "strict": true,
     "baseUrl": ".",
     "paths": {
+      "@testing-repo/gpt-common": ["libs/gpt-common/src/index.ts"],
       "@testing-repo/gpt-compiler": ["libs/gpt-compiler/src/index.ts"]
     }
   },

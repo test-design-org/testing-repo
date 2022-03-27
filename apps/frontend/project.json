@@ -14,7 +14,6 @@
         "outputPath": "dist/apps/frontend",
         "index": "apps/frontend/src/index.html",
         "main": "apps/frontend/src/index.tsx",
-        "polyfills": "apps/frontend/src/polyfills.ts",
         "tsConfig": "apps/frontend/tsconfig.app.json",
         "assets": [
           "apps/frontend/src/favicon.ico",

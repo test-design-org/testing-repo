@@ -3,7 +3,7 @@ import {
   IInput,
   IntervalDTO,
   MissingVariableDTO,
-} from './models/dtos';
+} from '@testing-repo/gpt-common';
 
 export function generateTestValue(
   input: IInput,

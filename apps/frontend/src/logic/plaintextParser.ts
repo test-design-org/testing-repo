@@ -6,8 +6,9 @@ import {
   IInput,
   IntervalDTO,
   MissingVariableDTO,
-} from './models/dtos';
-import { createUnaryIntervalDTO, expressionFromString } from './models/utils';
+  createUnaryIntervalDTO,
+  expressionFromString,
+} from '@testing-repo/gpt-common';
 import ohm from 'ohm-js';
 
 export class BoolVariable {

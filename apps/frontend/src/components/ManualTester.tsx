@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { runMONKE } from '../logic/algotithms/MONKE';
-import { Graph } from '../logic/graph';
+import { Graph } from '@testing-repo/gpt-common';
 import { generateGraph } from '../logic/graphGenerator';
 import { parseInput, Variable } from '../logic/plaintextParser';
 

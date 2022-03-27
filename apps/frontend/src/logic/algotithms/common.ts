@@ -1,6 +1,5 @@
 import { union } from 'fp-ts/lib/Array';
-import { Edge, Graph } from '../graph';
-import { NTuple } from '../models/ntuple';
+import { Edge, Graph, NTuple } from '@testing-repo/gpt-common';
 
 export function replaceNodes(
   graph: Graph,

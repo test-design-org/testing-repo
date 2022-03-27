@@ -1,6 +1,4 @@
-import { Graph } from './graph';
-import type { IInput } from './models/dtos';
-import { NTuple } from './models/ntuple';
+import { Graph, NTuple, type IInput } from '@testing-repo/gpt-common';
 import { generateTestCases } from './testCaseGenerator';
 
 export function generateGraph(inputs: IInput[][]): Graph {

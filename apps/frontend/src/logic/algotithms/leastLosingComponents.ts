@@ -1,4 +1,4 @@
-import { Graph } from '../graph';
+import { Graph } from '@testing-repo/gpt-common';
 import {
   joinNodesOnEdge,
   minimumBy,
@@ -28,7 +28,7 @@ export function runLeastLosingComponents(_graph: Graph): Graph {
   while (graph.edges.length > 0) {
     evaluateEdgesComponentsCount(graph);
 
-    var edgeToJoin = minimumBy(graph.edges, (x) => x[2]);
+    const edgeToJoin = minimumBy(graph.edges, (x) => x[2]);
 
     joinNodesOnEdge(graph, edgeToJoin);
   }

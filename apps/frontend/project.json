@@ -11,7 +11,7 @@
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
-        "outputPath": "dist/apps/frontend",
+        "outputPath": "build",
         "index": "apps/frontend/src/index.html",
         "main": "apps/frontend/src/index.tsx",
         "tsConfig": "apps/frontend/tsconfig.app.json",

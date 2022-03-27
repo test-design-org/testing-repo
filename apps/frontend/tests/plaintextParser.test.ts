@@ -3,14 +3,14 @@ import {
   Expression,
   IntervalDTO,
   MissingVariableDTO,
-} from '../logic/models/dtos';
+} from '../src/logic/models/dtos';
 import {
   BoolVariable,
   NumberVariable,
   parseInput,
   parseTestCases,
   parseVariables,
-} from '../logic/plaintextParser';
+} from '../src/logic/plaintextParser';
 
 describe('parseVariable', () => {
   it('parses a boolVariable', () => {

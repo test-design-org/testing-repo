@@ -124,7 +124,7 @@ const gptSemantics = gptGrammar.createSemantics().addOperation('eval', {
 export function parseVariables(varString: string): Variable[] {
   const m = gptGrammar.match(varString, 'VarDecls');
   if (m.succeeded()) {
-    const parse = gptSemantics(m).eval();
+    const parse = gptSemantics(m)['eval']();
     console.log(parse);
     return parse;
   } else {
@@ -135,7 +135,7 @@ export function parseVariables(varString: string): Variable[] {
 export function parseTestCases(variables: Variable[], line: string): IInput[] {
   const m = gptGrammar.match(line, 'TestCases');
   if (m.succeeded()) {
-    const parsedInputs = gptSemantics(m).eval();
+    const parsedInputs = gptSemantics(m)['eval']();
 
     const validatedVariableInputs = zip(variables)(parsedInputs).map(
       ([input, variable]) => {

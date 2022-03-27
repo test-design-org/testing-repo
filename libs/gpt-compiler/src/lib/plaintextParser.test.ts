@@ -10,7 +10,7 @@ import {
   parseInput,
   parseTestCases,
   parseVariables,
-} from '../src/logic/plaintextParser';
+} from './plaintextParser';
 
 describe('parseVariable', () => {
   it('parses a boolVariable', () => {

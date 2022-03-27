@@ -21,9 +21,8 @@
     "noEmit": true,
 
 
-    "noImplicitAny": false,
-
-
+    
+    "noImplicitAny": false
   },
   "files": [],
   "include": [],

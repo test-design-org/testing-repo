@@ -1,1 +1,1 @@
-export * from './lib/gpt-compiler';
+export * from './lib/plaintextParser';

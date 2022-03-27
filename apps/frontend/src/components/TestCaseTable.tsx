@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Graph } from '@testing-repo/gpt-common';
 import { Variable } from '@testing-repo/gpt-compiler';
-import { generateTestValue } from '../logic/testValueGenerator';
+import { generateTestValue } from '@testing-repo/gpt-algorithm';
 import './TestCaseTable.scss';
 
 const TestCaseTable = ({

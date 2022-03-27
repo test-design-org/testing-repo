@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { runMONKE } from '../logic/algotithms/MONKE';
+import { runMONKE, generateGraph } from '@testing-repo/gpt-algorithm';
 import { Graph } from '@testing-repo/gpt-common';
-import { generateGraph } from '../logic/graphGenerator';
 import { parseInput, Variable } from '@testing-repo/gpt-compiler';
 
 import './ManualTester.scss';

@@ -11,12 +11,13 @@
     "isolatedModules": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2021", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "strict": true,
     "baseUrl": ".",
     "paths": {
+      "@testing-repo/gpt-algorithm": ["libs/gpt-algorithm/src/index.ts"],
       "@testing-repo/gpt-common": ["libs/gpt-common/src/index.ts"],
       "@testing-repo/gpt-compiler": ["libs/gpt-compiler/src/index.ts"]
     }

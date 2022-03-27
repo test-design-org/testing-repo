@@ -34,6 +34,7 @@ export class NTuple {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace NTuple {
   export const Eq: Eq<NTuple> = {
     equals(x: NTuple, y: NTuple): boolean {

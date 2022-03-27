@@ -29,11 +29,7 @@ export class BoolDTO implements IInput {
   boolVal: boolean;
   isConstant: boolean;
 
-  constructor(
-    expression: Expression,
-    boolVal: boolean,
-    isConstant: boolean = false,
-  ) {
+  constructor(expression: Expression, boolVal: boolean, isConstant = false) {
     this.expression = expression;
     this.boolVal = boolVal;
     this.isConstant = isConstant;
@@ -78,7 +74,7 @@ export class MissingVariableDTO implements IInput {
   expression = Expression.MissingVariable;
   isConstant = false;
 
-  intersectsWith(other: IInput): boolean {
+  intersectsWith(_other: IInput): boolean {
     return true;
   }
   intersect(other: IInput): IInput {
@@ -114,7 +110,7 @@ export class IntervalDTO implements IInput {
     interval: Interval,
     precision: number,
     isOpen: IsOpen = { hi: false, lo: false },
-    isConstant: boolean = false,
+    isConstant = false,
   ) {
     this.expression = expression;
     this.interval = interval;
@@ -183,6 +179,7 @@ export class IntervalDTO implements IInput {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace IInput {
   export const Eq: Eq<IInput> = {
     equals(x: IInput, y: IInput) {

@@ -6,50 +6,55 @@ on:
   pull_request:
     branches: [ main ]
 
-jobs:
+jobs: 
   build:
     runs-on: ubuntu-latest
     env:
       node-version: 16.x
     
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
-    - name: Use Node.js ${{ env.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ env.node-version }}
+      - name: Derive appropriate SHAs for base and head for `nx affected` commands
+        uses: nrwl/nx-set-shas@v2
+
+      - name: Use Node.js ${{ env.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.node-version }}
+          
+      - name: Cache npm global modules (yarn, nx)
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-  
+
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+          
+      - name: Install Yarn, Nx
+        run: npm install -g yarn nx
         
-    - name: Cache npm global modules (yarn)
-      uses: actions/cache@v2
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-node-  
+      - name: Install dependencies
+        run: yarn install
 
-    - name: Cache node_modules
-      uses: actions/cache@v2
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Build
+        run: nx affected --target=build --parallel=3
         
-    - name: Install Yarn
-      run: npm install -g yarn
-      
-    - name: Install dependencies
-      run: yarn install
+      - name: Test
+        run: nx affected --target=test --parallel=2
+        env:
+          CI: false
 
-    - name: Test
-      run: yarn test
-      
-    - name: build
-      run: yarn build
-      env:
-        CI: false
-
-    - name: Create artifact 
-      uses: actions/upload-artifact@v2
-      with:
-        name: general_predicate_testing
-        path: ./build
+      - name: Create artifact 
+        uses: actions/upload-artifact@v2
+        with:
+          name: general_predicate_testing
+          path: ./build

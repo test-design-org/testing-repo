@@ -1,31 +1,87 @@
-# General Predicate Testing
+# TestingRepo
 
-## Available Scripts
+This project was generated using [Nx](https://nx.dev).
 
-In the project directory, you can run:
+<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
 
-### `yarn start`
+🔎 **Smart, Fast and Extensible Build System**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Adding capabilities to your workspace
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Nx supports many plugins which add capabilities for developing different types of applications and different tools.
 
-### `yarn test`
+These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Below are our core plugins:
 
-### `yarn build`
+-   [React](https://reactjs.org)
+    -   `npm install --save-dev @nrwl/react`
+-   Web (no framework frontends)
+    -   `npm install --save-dev @nrwl/web`
+-   [Angular](https://angular.io)
+    -   `npm install --save-dev @nrwl/angular`
+-   [Nest](https://nestjs.com)
+    -   `npm install --save-dev @nrwl/nest`
+-   [Express](https://expressjs.com)
+    -   `npm install --save-dev @nrwl/express`
+-   [Node](https://nodejs.org)
+    -   `npm install --save-dev @nrwl/node`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+There are also many [community plugins](https://nx.dev/community) you could add.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Generate an application
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Run `nx g @nrwl/react:app my-app` to generate an application.
+
+> You can use any of the plugins above to generate applications as well.
+
+When using Nx, you can create multiple applications and libraries in the same workspace.
+
+## Generate a library
+
+Run `nx g @nrwl/react:lib my-lib` to generate a library.
+
+> You can also use any of the plugins above to generate libraries as well.
+
+Libraries are shareable across libraries and applications. They can be imported from `@testing-repo/mylib`.
+
+## Development server
+
+Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+
+## Code scaffolding
+
+Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
+
+## Build
+
+Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+## Running unit tests
+
+Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+
+Run `nx affected:test` to execute the unit tests affected by a change.
+
+## Understand your workspace
+
+Run `nx graph` to see a diagram of the dependencies of your projects.
+
+## Further help
+
+Visit the [Nx Documentation](https://nx.dev) to learn more.
+
+## ☁ Nx Cloud
+
+### Distributed Computation Caching & Distributed Task Execution
+
+<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
+
+Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
+
+Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
+
+Visit [Nx Cloud](https://nx.app/) to learn more.
 
 ## Development
 ### Parsing

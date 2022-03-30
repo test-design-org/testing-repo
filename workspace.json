@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "projects": {
+    "frontend": "apps/frontend",
+    "gpt-algorithm": "libs/gpt-algorithm",
+    "gpt-common": "libs/gpt-common",
+    "gpt-compiler": "libs/gpt-compiler"
+  }
+}

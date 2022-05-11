@@ -1,11 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { runMONKE, generateGraph } from '@testing-repo/gpt-algorithm';
-import { Graph } from '@testing-repo/gpt-common';
+import {
+  runMONKE,
+  generateGraph,
+  runLeastLosingEdges,
+  runLeastLosingComponents,
+  runLeastLosingNodesReachable,
+} from '@testing-repo/gpt-algorithm';
+import { Graph, IInput } from '@testing-repo/gpt-common';
 import { parseInput, Variable } from '@testing-repo/gpt-compiler';
 
 import './ManualTester.scss';
 import TestCaseTable from './TestCaseTable';
 import UsageGuide from './UsageGuide';
+
+const benchmarkAlgorithm = (
+  algorithm: (_: Graph) => Graph,
+  algorithmName: string,
+  graph: Graph,
+) => {
+  console.time(`${algorithmName} speed`);
+  const result = algorithm(graph);
+  console.timeEnd(`${algorithmName} speed`);
+  console.log(`${algorithmName} node count: ${result.nodes.length}`);
+};
 
 interface GeneratedState {
   variables: Variable[];
@@ -17,6 +34,19 @@ const generateState = (input: string) => {
 
   const originalGraph = generateGraph(testCases);
   const graph = runMONKE(originalGraph);
+
+  benchmarkAlgorithm(runMONKE, 'MONKE', originalGraph);
+  benchmarkAlgorithm(runLeastLosingEdges, 'Least Losing: Edges', originalGraph);
+  benchmarkAlgorithm(
+    runLeastLosingComponents,
+    'Least Losing: Components',
+    originalGraph,
+  );
+  benchmarkAlgorithm(
+    runLeastLosingNodesReachable,
+    'Least Losing: Nodes Reachable',
+    originalGraph,
+  );
 
   return {
     variables,

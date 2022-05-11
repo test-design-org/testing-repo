@@ -6,27 +6,27 @@ import {
 } from './common';
 import { createGraphUrl } from '../graphGenerator';
 
-function evaluateEdgesComponentsCount(graph: Graph) {
-  const initialComponentCount = numberOfConnectedComponentsComponents(graph);
+function evaluateEdgesEdgeLosingCount(graph: Graph) {
+  const initialEdgeCount = graph.edges.length;
   for (const edge of graph.edges) {
     const workingGraph = graph.shallowClone();
 
     joinNodesOnEdge(workingGraph, edge);
 
-    const newComponentCount = numberOfConnectedComponentsComponents(graph);
-    edge[2] = newComponentCount - initialComponentCount;
+    const newEdgeCount = graph.edges.length;
+    edge[2] = newEdgeCount - initialEdgeCount;
   }
   // console.log(
-  //   'Partial data, least losing component graph: ',
+  //   'Partial data, least losing edges graph: ',
   //   createGraphUrl(graph),
   // );
 }
 
-export function runLeastLosingComponents(_graph: Graph): Graph {
+export function runLeastLosingEdges(_graph: Graph): Graph {
   const graph = _graph.shallowClone();
 
   while (graph.edges.length > 0) {
-    evaluateEdgesComponentsCount(graph);
+    evaluateEdgesEdgeLosingCount(graph);
 
     const edgeToJoin = minimumBy(graph.edges, (x) => x[2]);
 

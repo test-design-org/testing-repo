@@ -23,10 +23,10 @@ function evaluateEdgesreachableCount(graph: Graph) {
     // -1, because we shouldn't count the starting node itself
     edge[2] = initiallyReachable - reachableAfterTheJoin - 1;
   }
-  console.log(
-    'Partial data, least losing nodes reachable graph: ',
-    createGraphUrl(graph),
-  );
+  // console.log(
+  //   'Partial data, least losing nodes reachable graph: ',
+  //   createGraphUrl(graph),
+  // );
 }
 
 export function runLeastLosingNodesReachable(_graph: Graph): Graph {

@@ -5,5 +5,6 @@
     "gpt-algorithm": "libs/gpt-algorithm",
     "gpt-common": "libs/gpt-common",
     "gpt-compiler": "libs/gpt-compiler"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

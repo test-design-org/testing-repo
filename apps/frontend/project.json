@@ -1,13 +1,11 @@
 {
-  "root": "apps/frontend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/frontend/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "@nrwl/web:webpack",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "compiler": "babel",
@@ -20,9 +18,7 @@
           "apps/frontend/src/manifest.json",
           "apps/frontend/src/assets"
         ],
-        "styles": [
-          "apps/frontend/src/App.scss"
-        ],
+        "styles": ["apps/frontend/src/App.scss"],
         "scripts": [],
         "webpackConfig": "apps/frontend/webpack.config.js"
       },
@@ -40,6 +36,12 @@
           "namedChunks": false,
           "extractLicenses": true,
           "vendorChunk": false
+        },
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
         }
       }
     },
@@ -53,27 +55,25 @@
         "production": {
           "buildTarget": "frontend:build:production",
           "hmr": false
+        },
+        "development": {
+          "buildTarget": "frontend:build:development"
         }
-      }
+      },
+      "defaultConfiguration": "development"
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "apps/frontend/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/frontend/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": [
-        "coverage/apps/frontend"
-      ],
+      "outputs": ["coverage/apps/frontend"],
       "options": {
-        "jestConfig": "apps/frontend/jest.config.js",
+        "jestConfig": "apps/frontend/jest.config.ts",
         "passWithNoTests": true
       }
     }
